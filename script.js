@@ -32,8 +32,8 @@ reveals.forEach((item) => revealObserver.observe(item));
 function updateScrollEffects() {
   const scrollTop = window.scrollY;
   const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  progress.style.width = `${maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0}%`;
-  header.classList.toggle("is-elevated", scrollTop > 12);
+  if (progress) progress.style.width = `${maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0}%`;
+  if (header) header.classList.toggle("is-elevated", scrollTop > 12);
   parallaxItems.forEach((item) => item.style.setProperty("--parallax", `${scrollTop * Number(item.dataset.depth || 0)}px`));
 }
 
@@ -43,6 +43,7 @@ updateScrollEffects();
 document.querySelectorAll("[data-project] button").forEach((button) => {
   button.addEventListener("click", () => {
     const data = projectData[button.closest("[data-project]").dataset.project];
+    if (!modal || !data) return;
     modalKicker.textContent = data[0];
     modalTitle.textContent = data[1];
     modalDesc.textContent = data[2];
@@ -54,6 +55,7 @@ document.querySelectorAll("[data-project] button").forEach((button) => {
 });
 
 function closeModal() {
+  if (!modal) return;
   modal.classList.remove("is-open");
   modal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
