@@ -5,226 +5,243 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="平面设计师个人作品集网站，展示品牌视觉、包装设计、海报与商业平面项目。"
+      content="郑壮壮，平面设计师。提供菜单、展会、集市、字体设计、品牌视觉与包装设计。"
     />
-    <title>Yue Studio | Graphic Design Portfolio</title>
+    <title>郑壮壮 | 平面设计师作品集</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="site-header" data-reveal>
-      <a class="brand" href="#top" aria-label="返回首页">
-        <span>Yue</span>
-        <span>Studio</span>
-      </a>
+    <header class="site-header" data-elevate>
+      <a class="brand" href="#top" aria-label="回到首页">郑壮壮</a>
       <nav class="nav" aria-label="主导航">
-        <a href="#works">作品</a>
-        <a href="#profile">关于</a>
+        <a href="#work">作品</a>
+        <a href="#services">服务</a>
+        <a href="#process">流程</a>
         <a href="#contact">联系</a>
       </nav>
     </header>
 
     <main id="top">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-media" aria-hidden="true"></div>
-        <div class="hero-copy" data-reveal>
-          <p class="eyebrow">Brand Identity / Packaging / Poster</p>
-          <h1 id="hero-title">用清晰的视觉秩序，替品牌留下第一印象。</h1>
-          <p class="hero-text">
-            独立平面设计师，专注品牌视觉、包装系统、商业海报与社交媒体视觉。
+      <section class="hero">
+        <div class="hero-copy reveal">
+          <p class="kicker">Graphic Designer</p>
+          <h1>简洁、清楚、有记忆点的商业平面设计。</h1>
+          <p class="lead">
+            我是郑壮壮，平面设计师。为餐饮、展会、集市活动和消费品牌提供菜单、主视觉、字体、品牌视觉与包装设计。
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#works">查看作品</a>
-            <a class="button ghost" href="#contact">预约合作</a>
+            <a class="button dark" href="#work">查看作品方向</a>
+            <a class="button light" href="tel:15835779033">15835779033</a>
           </div>
         </div>
-        <a class="scroll-cue" href="#works" aria-label="滚动到作品">
-          <span></span>
-        </a>
+
+        <div class="hero-visual reveal" aria-label="作品视觉预览">
+          <div class="device-frame">
+            <img src="assets/web/menu-cafe.jpg" alt="极简餐饮菜单与桌面视觉参考" />
+          </div>
+          <div class="floating-note">
+            <span>Menu / Exhibition / Market / Type</span>
+            <strong>Brand ready visuals</strong>
+          </div>
+        </div>
       </section>
 
-      <section class="intro-strip" aria-label="服务方向">
-        <p>品牌识别</p>
-        <p>包装设计</p>
-        <p>活动主视觉</p>
-        <p>画册版式</p>
-        <p>社媒物料</p>
+      <section class="statement reveal" aria-label="设计定位">
+        <p>
+          作品集不只展示图片，也要让客户快速理解：你能解决什么问题、能交付什么文件、合作从哪里开始。
+        </p>
       </section>
 
-      <section class="section works-section" id="works" aria-labelledby="works-title">
-        <div class="section-heading" data-reveal>
-          <p class="eyebrow">Selected Works</p>
-          <h2 id="works-title">精选项目</h2>
+      <section class="work-section" id="work" aria-labelledby="work-title">
+        <div class="section-head reveal">
+          <p class="kicker">Selected Directions</p>
+          <h2 id="work-title">先用六个方向建立你的作品集。</h2>
+        </div>
+
+        <div class="filter-bar reveal" role="list" aria-label="作品分类筛选">
+          <button class="filter is-active" type="button" data-filter="all">全部</button>
+          <button class="filter" type="button" data-filter="commercial">商业物料</button>
+          <button class="filter" type="button" data-filter="event">活动视觉</button>
+          <button class="filter" type="button" data-filter="brand">品牌包装</button>
+          <button class="filter" type="button" data-filter="type">字体</button>
         </div>
 
         <div class="work-grid">
-          <article class="work-item large" data-reveal>
-            <a href="#project-brand" aria-label="查看 Soluna 品牌视觉项目">
-              <img
-                src="assets/brand-work.png"
-                alt="Soluna 品牌视觉系统样张"
-              />
-              <div class="work-meta">
-                <p>Brand Identity</p>
-                <h3>Soluna Lifestyle</h3>
-              </div>
-            </a>
+          <article class="work-card reveal" data-category="commercial">
+            <img src="assets/web/menu-cafe.jpg" alt="菜单设计参考图" />
+            <div class="work-copy">
+              <p>Menu Design</p>
+              <h3>餐饮菜单系统</h3>
+              <span>菜单版式、价目层级、桌牌、点餐页、门店物料。</span>
+            </div>
           </article>
 
-          <article class="work-item" data-reveal>
-            <a href="#project-packaging" aria-label="查看 Nori Lab 包装项目">
-              <img
-                src="assets/packaging-work.png"
-                alt="Nori Lab 包装设计样张"
-              />
-              <div class="work-meta">
-                <p>Packaging</p>
-                <h3>Nori Lab</h3>
-              </div>
-            </a>
+          <article class="work-card reveal" data-category="event">
+            <img src="assets/web/poster-frame.jpg" alt="展会海报与画框展示参考" />
+            <div class="work-copy">
+              <p>Exhibition Visual</p>
+              <h3>展会主视觉</h3>
+              <span>主海报、导视、展板、邀请函、现场传播物料。</span>
+            </div>
           </article>
 
-          <article class="work-item" data-reveal>
-            <a href="#project-poster" aria-label="查看 City Echo 海报系统项目">
-              <img
-                src="assets/poster-work.png"
-                alt="City Echo 海报系统样张"
-              />
-              <div class="work-meta">
-                <p>Poster System</p>
-                <h3>City Echo</h3>
-              </div>
-            </a>
+          <article class="work-card reveal" data-category="event">
+            <img src="assets/web/market-lights.jpg" alt="夜间集市灯光与摊位氛围参考" />
+            <div class="work-copy">
+              <p>Market Identity</p>
+              <h3>集市活动视觉</h3>
+              <span>活动标识、摊位牌、社媒长图、票券、现场标牌。</span>
+            </div>
+          </article>
+
+          <article class="work-card reveal" data-category="type">
+            <img src="assets/poster-work.png" alt="字体海报设计参考" />
+            <div class="work-copy">
+              <p>Typography</p>
+              <h3>字体与海报</h3>
+              <span>标题字设计、字体实验、活动海报、视觉节奏。</span>
+            </div>
+          </article>
+
+          <article class="work-card reveal" data-category="brand">
+            <img src="assets/brand-detail.png" alt="品牌视觉系统参考" />
+            <div class="work-copy">
+              <p>Brand Identity</p>
+              <h3>品牌视觉系统</h3>
+              <span>Logo、标准色、字体、图形语言、品牌手册。</span>
+            </div>
+          </article>
+
+          <article class="work-card reveal" data-category="brand">
+            <img src="assets/web/packaging-boxes.jpg" alt="包装设计参考图" />
+            <div class="work-copy">
+              <p>Packaging</p>
+              <h3>包装设计</h3>
+              <span>外盒、瓶贴、礼盒、系列包装、电商展示图。</span>
+            </div>
           </article>
         </div>
       </section>
 
-      <section class="project-detail" id="project-brand" aria-labelledby="brand-title">
-        <div class="project-copy" data-reveal>
-          <p class="eyebrow">01 / Brand Identity</p>
-          <h2 id="brand-title">Soluna Lifestyle</h2>
+      <section class="feature-case" aria-labelledby="case-title">
+        <div class="case-media reveal">
+          <img src="assets/web/packaging-boxes.jpg" alt="简约包装纸盒参考图" />
+        </div>
+        <div class="case-copy reveal">
+          <p class="kicker">How A Project Reads</p>
+          <h2 id="case-title">每个项目都应该讲清楚：背景、目标、方案、交付。</h2>
           <p>
-            为生活方式品牌建立一套轻盈但有识别度的视觉系统，覆盖标志、色彩、字体、包装贴纸与社交媒体模板。
+            新版网站会把图片放大，但不会只堆图片。每个项目都用统一结构说明你做了什么，以及为什么这样做。
           </p>
-          <dl class="project-facts">
-            <div>
-              <dt>职责</dt>
-              <dd>视觉方向、Logo、VI 延展</dd>
-            </div>
-            <div>
-              <dt>交付</dt>
-              <dd>品牌手册、包装贴纸、社媒模板</dd>
-            </div>
-          </dl>
-        </div>
-        <div class="project-gallery" data-reveal>
-          <img
-            src="assets/brand-detail.png"
-            alt="Soluna 品牌手册与印刷规范样张"
-          />
-        </div>
-      </section>
-
-      <section class="project-detail reverse" id="project-packaging" aria-labelledby="packaging-title">
-        <div class="project-copy" data-reveal>
-          <p class="eyebrow">02 / Packaging</p>
-          <h2 id="packaging-title">Nori Lab</h2>
-          <p>
-            为护肤产品线设计包装语言。用克制的版面、清楚的品类层级和细节色块，让货架识别更直接。
-          </p>
-          <dl class="project-facts">
-            <div>
-              <dt>职责</dt>
-              <dd>包装结构、标签系统、成套延展</dd>
-            </div>
-            <div>
-              <dt>交付</dt>
-              <dd>瓶贴、外盒、礼袋、上新 KV</dd>
-            </div>
-          </dl>
-        </div>
-        <div class="project-gallery split" data-reveal>
-          <img
-            src="assets/package-detail-a.png"
-            alt="Nori Lab 单品包装正面"
-          />
-          <img
-            src="assets/package-detail-b.png"
-            alt="Nori Lab 系列包装陈列"
-          />
-        </div>
-      </section>
-
-      <section class="project-detail" id="project-poster" aria-labelledby="poster-title">
-        <div class="project-copy" data-reveal>
-          <p class="eyebrow">03 / Poster System</p>
-          <h2 id="poster-title">City Echo</h2>
-          <p>
-            城市文化活动海报系统，围绕节奏、噪声和街区地图建立图形语言，适配线下海报、票券和线上传播图。
-          </p>
-          <dl class="project-facts">
-            <div>
-              <dt>职责</dt>
-              <dd>主视觉、版式系统、传播物料</dd>
-            </div>
-            <div>
-              <dt>交付</dt>
-              <dd>海报、票券、横幅、社媒长图</dd>
-            </div>
-          </dl>
-        </div>
-        <div class="poster-wall" data-reveal aria-label="海报视觉样张">
-          <div class="poster-card amber">
-            <span>City Echo</span>
-            <strong>Street<br />Sound</strong>
-          </div>
-          <div class="poster-card ink">
-            <span>Festival</span>
-            <strong>Night<br />Grid</strong>
-          </div>
-          <div class="poster-card blue">
-            <span>Live Set</span>
-            <strong>Block<br />Pulse</strong>
+          <button class="text-button" type="button" data-expand="case-detail">查看项目说明结构</button>
+          <div class="case-detail" id="case-detail">
+            <dl>
+              <div>
+                <dt>项目背景</dt>
+                <dd>客户是谁，使用场景是什么，原本遇到什么问题。</dd>
+              </div>
+              <div>
+                <dt>设计目标</dt>
+                <dd>提升识别、统一物料、突出价格层级、强化品牌感。</dd>
+              </div>
+              <div>
+                <dt>视觉策略</dt>
+                <dd>字体、色彩、版式、图形、材质和应用方式。</dd>
+              </div>
+              <div>
+                <dt>交付内容</dt>
+                <dd>源文件、印刷文件、导出图、使用说明或延展模板。</dd>
+              </div>
+            </dl>
           </div>
         </div>
       </section>
 
-      <section class="profile" id="profile" aria-labelledby="profile-title">
-        <div class="profile-image" data-reveal>
-          <img
-            src="assets/studio.png"
-            alt="Yue Studio 工作室视觉墙样张"
-          />
+      <section class="services" id="services" aria-labelledby="services-title">
+        <div class="section-head reveal">
+          <p class="kicker">Services</p>
+          <h2 id="services-title">把能力写成客户能理解的交付物。</h2>
         </div>
-        <div class="profile-copy" data-reveal>
-          <p class="eyebrow">About</p>
-          <h2 id="profile-title">从品牌概念到落地物料，让视觉保持同一种语气。</h2>
+        <div class="service-list">
+          <article class="service-row reveal">
+            <span>01</span>
+            <h3>菜单与商业物料</h3>
+            <p>菜单、价目表、桌牌、折页、名片、门店海报、开业物料。</p>
+          </article>
+          <article class="service-row reveal">
+            <span>02</span>
+            <h3>展会与活动视觉</h3>
+            <p>展会主视觉、集市视觉、导视、展板、邀请函、票券、社媒图。</p>
+          </article>
+          <article class="service-row reveal">
+            <span>03</span>
+            <h3>品牌视觉</h3>
+            <p>Logo、品牌色彩、字体规范、辅助图形、基础 VI 和品牌手册。</p>
+          </article>
+          <article class="service-row reveal">
+            <span>04</span>
+            <h3>包装设计</h3>
+            <p>产品外盒、瓶贴、礼盒、系列包装、电商主图和包装延展。</p>
+          </article>
+          <article class="service-row reveal">
+            <span>05</span>
+            <h3>字体设计</h3>
+            <p>标题字、品牌字标、海报字体、活动视觉字体和字形实验。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="process" id="process" aria-labelledby="process-title">
+        <div class="section-head reveal">
+          <p class="kicker">Workflow</p>
+          <h2 id="process-title">合作流程要简单、透明、可预期。</h2>
+        </div>
+        <div class="steps">
+          <div class="step reveal">
+            <span>01</span>
+            <strong>需求沟通</strong>
+            <p>确认项目类型、用途、预算、周期和需要交付的文件。</p>
+          </div>
+          <div class="step reveal">
+            <span>02</span>
+            <strong>方向提案</strong>
+            <p>整理参考、确定视觉方向，先对齐风格和信息层级。</p>
+          </div>
+          <div class="step reveal">
+            <span>03</span>
+            <strong>深化设计</strong>
+            <p>完成主视觉、版式系统、应用物料和必要的延展图。</p>
+          </div>
+          <div class="step reveal">
+            <span>04</span>
+            <strong>文件交付</strong>
+            <p>交付可印刷、可发布、可继续编辑的项目文件。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="about" aria-labelledby="about-title">
+        <div class="about-copy reveal">
+          <p class="kicker">About</p>
+          <h2 id="about-title">郑壮壮，平面设计师。</h2>
           <p>
-            我擅长把抽象定位转化成可执行的视觉系统：标志、字体、配色、版式、包装与传播物料会一起被考虑，而不是分散成单张好看的图。
+            关注清晰的信息层级、克制的视觉语言和可落地的商业应用。项目可以从菜单、展会和集市物料开始，也可以继续延展到品牌视觉和包装系统。
           </p>
-          <ul class="capabilities" aria-label="能力列表">
-            <li>品牌视觉系统</li>
-            <li>包装与标签设计</li>
-            <li>海报与活动主视觉</li>
-            <li>画册、菜单、宣传物料</li>
-          </ul>
         </div>
       </section>
 
       <section class="contact" id="contact" aria-labelledby="contact-title">
-        <div data-reveal>
-          <p class="eyebrow">Contact</p>
-          <h2 id="contact-title">有品牌、包装或活动视觉需求，可以从这里开始。</h2>
-        </div>
-        <div class="contact-panel" data-reveal>
-          <a href="mailto:hello@example.com">hello@example.com</a>
-          <a href="tel:+8613800000000">+86 138 0000 0000</a>
-          <p>微信：your-wechat-id</p>
-        </div>
+        <p class="kicker reveal">Contact</p>
+        <h2 id="contact-title" class="reveal">如果你需要菜单、展会、集市、品牌或包装设计，可以直接联系。</h2>
+        <a class="phone reveal" href="tel:15835779033">15835779033</a>
       </section>
     </main>
 
+    <a class="sticky-contact" href="tel:15835779033" aria-label="电话联系郑壮壮">联系</a>
+
     <footer class="footer">
-      <p>© 2026 Yue Studio. Graphic Design Portfolio.</p>
+      <p>© 2026 郑壮壮 Graphic Design Portfolio</p>
       <a href="#top">回到顶部</a>
     </footer>
 
