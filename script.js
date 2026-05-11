@@ -1,45 +1,26 @@
-const header = document.querySelector("[data-elevate]");
-const revealItems = document.querySelectorAll(".reveal");
+const progress = document.querySelector(".progress");
 const filters = document.querySelectorAll("[data-filter]");
-const cards = document.querySelectorAll("[data-category]");
-const expandButton = document.querySelector("[data-expand]");
+const cases = document.querySelectorAll("[data-type]");
+const steps = document.querySelectorAll(".steps button");
 
-const revealObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("is-visible");
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.18 }
-);
+function updateProgress() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  progress.style.width = `${max > 0 ? (scrollY / max) * 100 : 0}%`;
+}
 
-revealItems.forEach((item) => revealObserver.observe(item));
-
-const updateHeader = () => {
-  header.classList.toggle("is-elevated", window.scrollY > 12);
-};
-
-window.addEventListener("scroll", updateHeader, { passive: true });
-updateHeader();
+addEventListener("scroll", updateProgress, { passive: true });
+updateProgress();
 
 filters.forEach((button) => {
   button.addEventListener("click", () => {
-    const selected = button.dataset.filter;
-
-    filters.forEach((item) => item.classList.toggle("is-active", item === button));
-
-    cards.forEach((card) => {
-      const visible = selected === "all" || card.dataset.category === selected;
-      card.classList.toggle("is-hidden", !visible);
-    });
+    const filter = button.dataset.filter;
+    filters.forEach((item) => item.classList.toggle("active", item === button));
+    cases.forEach((item) => item.classList.toggle("hidden", filter !== "all" && item.dataset.type !== filter));
   });
 });
 
-expandButton?.addEventListener("click", () => {
-  const detail = document.getElementById(expandButton.dataset.expand);
-  const isOpen = detail.classList.toggle("is-open");
-  expandButton.textContent = isOpen ? "收起项目说明结构" : "查看项目说明结构";
+steps.forEach((step) => {
+  step.addEventListener("click", () => {
+    steps.forEach((item) => item.classList.toggle("open", item === step));
+  });
 });
