@@ -164,10 +164,15 @@ h1, h2, h3, p { margin-top: 0; }
   letter-spacing: -0.04em;
   line-height: 0.74;
   text-transform: uppercase;
+  animation: agency-wordmark-in 900ms var(--ease) 120ms both;
 }
 .agency-wordmark span {
   display: block;
   white-space: nowrap;
+  transform-origin: left center;
+}
+.agency-wordmark span:last-child {
+  animation: agency-wordmark-second 900ms var(--ease) 220ms both;
 }
 .agency-panel {
   position: relative;
@@ -179,6 +184,8 @@ h1, h2, h3, p { margin-top: 0; }
   background:
     radial-gradient(circle at calc(50% + var(--mx, 0) * 10%) calc(50% + var(--my, 0) * 10%), oklch(98% 0.11 105 / 60%), transparent 34%),
     var(--poster);
+  animation: agency-panel-in 860ms var(--ease) 360ms both;
+  transform-origin: top center;
 }
 .agency-panel::before {
   content: "";
@@ -203,6 +210,7 @@ h1, h2, h3, p { margin-top: 0; }
   line-height: 0.82;
   opacity: 0.96;
   transform: translate3d(calc(var(--mx, 0) * -10px), calc(var(--my, 0) * -8px), 0);
+  animation: agency-zz-slide 1100ms var(--ease) 620ms both;
 }
 .agency-marquee {
   position: absolute;
@@ -233,6 +241,19 @@ h1, h2, h3, p { margin-top: 0; }
   background: oklch(6% 0.005 255);
   box-shadow: 0 22px 70px oklch(6% 0.005 255 / 24%);
   transform: translate3d(calc(-50% + var(--mx, 0) * 24px), calc(var(--my, 0) * 20px), 0);
+  animation: agency-play-in 720ms var(--ease) 720ms both;
+}
+.agency-play::before,
+.agency-play::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border: 2px solid oklch(6% 0.005 255 / 28%);
+  border-radius: inherit;
+  animation: agency-play-ring 1800ms var(--ease) infinite;
+}
+.agency-play::after {
+  animation-delay: 520ms;
 }
 .agency-play span {
   width: 0;
@@ -248,6 +269,7 @@ h1, h2, h3, p { margin-top: 0; }
   top: 24%;
   z-index: 4;
   width: min(360px, 30vw);
+  animation: agency-copy-in 760ms var(--ease) 820ms both;
 }
 .agency-intro p {
   margin-bottom: 22px;
@@ -294,6 +316,9 @@ h1, h2, h3, p { margin-top: 0; }
   background: oklch(98% 0.004 255 / 78%);
   box-shadow: 0 18px 46px oklch(6% 0.005 255 / 12%);
   backdrop-filter: blur(16px);
+  opacity: 0;
+  animation: agency-node-in 760ms var(--ease) both;
+  animation-delay: calc(920ms + var(--i, 0) * 75ms);
   transition: transform 0.28s var(--ease), color 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
 }
 .agency-node span {
@@ -319,6 +344,12 @@ h1, h2, h3, p { margin-top: 0; }
   box-shadow: 0 26px 70px oklch(6% 0.005 255 / 24%);
   transform: translateY(-8px);
 }
+.agency-node:nth-child(1) { --i: 0; }
+.agency-node:nth-child(2) { --i: 1; }
+.agency-node:nth-child(3) { --i: 2; }
+.agency-node:nth-child(4) { --i: 3; }
+.agency-node:nth-child(5) { --i: 4; }
+.agency-node:nth-child(6) { --i: 5; }
 .agency-focus {
   position: absolute;
   left: clamp(24px, 4vw, 56px);
@@ -329,6 +360,7 @@ h1, h2, h3, p { margin-top: 0; }
   border-radius: 22px;
   color: var(--white);
   background: oklch(6% 0.005 255);
+  animation: agency-focus-in 760ms var(--ease) 1180ms both;
 }
 .agency-focus span {
   display: block;
@@ -353,6 +385,121 @@ h1, h2, h3, p { margin-top: 0; }
 @keyframes agency-marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-100%); }
+}
+
+@keyframes agency-wordmark-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes agency-wordmark-second {
+  from {
+    transform: translateX(-28px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes agency-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scaleY(0.92);
+    clip-path: inset(0 0 100% 0 round 30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    clip-path: inset(0 0 0 0 round 30px);
+  }
+}
+
+@keyframes agency-zz-slide {
+  from {
+    opacity: 0;
+    transform: translate3d(-12%, 18%, 0);
+  }
+  to {
+    opacity: 0.96;
+    transform: translate3d(calc(var(--mx, 0) * -10px), calc(var(--my, 0) * -8px), 0);
+  }
+}
+
+@keyframes agency-copy-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes agency-play-in {
+  from {
+    opacity: 0;
+    transform: translate3d(calc(-50% + var(--mx, 0) * 24px), calc(22px + var(--my, 0) * 20px), 0) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(calc(-50% + var(--mx, 0) * 24px), calc(var(--my, 0) * 20px), 0) scale(1);
+  }
+}
+
+@keyframes agency-play-mobile-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes agency-play-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.78);
+  }
+  38% {
+    opacity: 0.42;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes agency-node-in {
+  from {
+    opacity: 0;
+    transform: translateY(34px) rotate(-1.5deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes agency-focus-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .lab-hero {
@@ -561,6 +708,28 @@ h1, h2, h3, p { margin-top: 0; }
   right: auto;
   top: auto;
   bottom: auto;
+}
+.agency-grid .agency-node {
+  border: 2px solid oklch(6% 0.005 255);
+  color: oklch(6% 0.005 255);
+  background: oklch(98% 0.004 255 / 78%);
+  box-shadow: 0 18px 46px oklch(6% 0.005 255 / 12%);
+  transform: translateY(0);
+}
+.agency-grid .agency-node strong {
+  font-size: clamp(24px, 2.5vw, 38px);
+  font-weight: 900;
+}
+.agency-grid .agency-node:hover,
+.agency-grid .agency-node.is-active {
+  border-color: oklch(6% 0.005 255);
+  color: var(--white);
+  background: oklch(6% 0.005 255);
+  box-shadow: 0 26px 70px oklch(6% 0.005 255 / 24%);
+  transform: translateY(-8px);
+}
+.agency-grid .agency-node::before {
+  display: none;
 }
 .lab-focus {
   position: absolute;
@@ -1051,6 +1220,7 @@ h1, h2, h3, p { margin-top: 0; }
     height: 66px;
     margin: 0 auto 42px;
     transform: none;
+    animation-name: agency-play-mobile-in;
   }
   .agency-play span {
     border-top-width: 10px;
