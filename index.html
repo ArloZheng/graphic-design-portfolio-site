@@ -8,7 +8,7 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="home-page">
     <div class="progress" aria-hidden="true"></div>
     <header class="site-header" data-header>
       <a class="brand" href="index.html">ZZ Studio</a>
@@ -20,20 +20,62 @@
     </header>
 
     <main id="top">
-      <section class="home-hero">
-        <div class="hero-copy">
-          <p class="eyebrow reveal">Graphic Designer / Visual Systems</p>
+      <section class="lab-hero" data-lab>
+        <div class="lab-bg" aria-hidden="true">
+          <img src="assets/interactive-lab.png" alt="" />
+        </div>
+        <div class="lab-glow lab-glow-a" aria-hidden="true"></div>
+        <div class="lab-glow lab-glow-b" aria-hidden="true"></div>
+
+        <div class="lab-copy">
+          <p class="eyebrow reveal">Interactive Visual Lab</p>
           <h1 class="reveal">郑壮壮，平面设计师。</h1>
           <p class="hero-lead reveal">
-            以清晰、克制、可落地的视觉系统，承接品牌视觉、包装、菜单画册、展会集市、字体与线上传播设计。
+            点击右侧漂浮图层进入不同作品分类。每个入口对应一种设计能力，从品牌系统到菜单、包装、活动和字体延展。
           </p>
           <div class="hero-actions reveal">
-            <a class="pill primary" href="works.html">查看作品</a>
-            <a class="pill secondary" href="about.html">软件与能力</a>
+            <a class="pill primary" href="works.html">进入作品分类</a>
+            <a class="pill secondary" href="contact.html">联系合作</a>
           </div>
         </div>
-        <div class="hero-art reveal" data-depth="0.045">
-          <img src="assets/premium/hero-banner.png" alt="作品集视觉框架预览" />
+
+        <div class="lab-stage reveal" aria-label="作品分类交互入口">
+          <a class="lab-node node-brand is-active" href="brand.html" data-lab-node data-label="品牌视觉" data-desc="Logo、色彩、字体、辅助图形与基础 VI。">
+            <span>01</span>
+            <strong>Brand</strong>
+            <small>品牌视觉</small>
+          </a>
+          <a class="lab-node node-packaging" href="packaging.html" data-lab-node data-label="包装设计" data-desc="产品盒、瓶贴、礼盒和系列包装视觉。">
+            <span>02</span>
+            <strong>Packaging</strong>
+            <small>包装设计</small>
+          </a>
+          <a class="lab-node node-print" href="print.html" data-lab-node data-label="菜单画册" data-desc="菜单、画册、折页、价目表与印刷物料。">
+            <span>03</span>
+            <strong>Print</strong>
+            <small>菜单画册</small>
+          </a>
+          <a class="lab-node node-campaign" href="campaign.html" data-lab-node data-label="展会集市" data-desc="展会、集市、快闪和线下活动视觉系统。">
+            <span>04</span>
+            <strong>Event</strong>
+            <small>展会集市</small>
+          </a>
+          <a class="lab-node node-type" href="type.html" data-lab-node data-label="字体设计" data-desc="标题字、品牌字标、活动字体和字形实验。">
+            <span>05</span>
+            <strong>Type</strong>
+            <small>字体设计</small>
+          </a>
+          <a class="lab-node node-digital" href="digital.html" data-lab-node data-label="线上传播" data-desc="社媒封面、活动长图、电商主图和发布视觉。">
+            <span>06</span>
+            <strong>Digital</strong>
+            <small>线上传播</small>
+          </a>
+
+          <div class="lab-focus" aria-live="polite">
+            <span data-lab-index>01</span>
+            <strong data-lab-title>品牌视觉</strong>
+            <p data-lab-desc>Logo、色彩、字体、辅助图形与基础 VI。</p>
+          </div>
         </div>
       </section>
 
@@ -57,6 +99,16 @@
           <span>04</span>
           <h2>Campaign</h2>
           <p>展会、集市与活动视觉</p>
+        </a>
+        <a class="chapter reveal" href="type.html">
+          <span>05</span>
+          <h2>Type</h2>
+          <p>字体、字标与标题字设计</p>
+        </a>
+        <a class="chapter reveal" href="digital.html">
+          <span>06</span>
+          <h2>Digital</h2>
+          <p>线上传播与发布视觉</p>
         </a>
       </section>
 
