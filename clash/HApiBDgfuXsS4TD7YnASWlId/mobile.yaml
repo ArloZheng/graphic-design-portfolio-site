@@ -8,6 +8,10 @@ keep-alive-interval: 15
 unified-delay: true
 find-process-mode: always
 
+profile:
+  store-selected: true
+  store-fake-ip: true
+
 dns:
   enable: true
   ipv6: false
@@ -16,6 +20,7 @@ dns:
   use-hosts: true
   use-system-hosts: false
   respect-rules: true
+  cache-algorithm: arc
 
   # Bootstrap only: resolve DNS server hostnames and proxy-node hostnames.
   default-nameserver:
