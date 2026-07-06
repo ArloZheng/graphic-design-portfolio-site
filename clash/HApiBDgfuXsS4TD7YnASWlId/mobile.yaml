@@ -1,0 +1,82 @@
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+ipv6: false
+unified-delay: true
+
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  use-hosts: true
+  use-system-hosts: false
+  respect-rules: true
+
+  # Bootstrap only: resolve DNS server hostnames and proxy-node hostnames.
+  default-nameserver:
+    - 223.5.5.5
+
+  # CN domains use domestic resolver and then follow DIRECT routing.
+  nameserver-policy:
+    "geosite:cn":
+      - https://dns.alidns.com/dns-query
+
+  # Other domains use Cloudflare DoH; the DoH connection itself follows rules.
+  nameserver:
+    - https://1.1.1.1/dns-query
+
+  # Dedicated bootstrap resolver for proxy-server hostnames to avoid dependency loops.
+  proxy-server-nameserver:
+    - 223.5.5.5
+
+proxy-providers:
+  airport:
+    type: http
+    url: "https://app.mitce.net/?sid=652472&token=srvjonxb"
+    interval: 3600
+    path: ./proxy_provider/airport.yaml
+    header:
+      User-Agent:
+        - "clash.meta"
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 600
+
+proxies:
+  - name: "Oregon Residential"
+    type: socks5
+    server: 64.32.187.195
+    port: 443
+    username: "mYtvKnngzRKG"
+    password: "ChzwfDZ4UC"
+    udp: true
+    dialer-proxy: "Airport Front"
+
+proxy-groups:
+  - name: "Airport Front"
+    type: select
+    use:
+      - airport
+
+  - name: "Final Exit"
+    type: select
+    proxies:
+      - "Oregon Residential"
+
+rules:
+  # Domestic domains and IPs go DIRECT.
+  - GEOSITE,CN,DIRECT
+  - GEOIP,CN,DIRECT,no-resolve
+
+  # Foreign UDP/WebRTC first tries the residential SOCKS5 exit.
+  - NETWORK,UDP,Final Exit
+
+  # Safety net: if the selected residential node is considered UDP-incapable,
+  # Mihomo continues matching downward; reject here instead of leaking via DIRECT.
+  - NETWORK,UDP,REJECT
+
+  # All remaining foreign TCP/HTTPS uses the residential exit.
+  - MATCH,Final Exit
