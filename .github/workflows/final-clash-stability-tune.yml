@@ -1,0 +1,47 @@
+name: Final Clash stability tune
+
+on:
+  push:
+    paths:
+      - '.github/workflows/final-clash-stability-tune.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply final low-risk stability settings
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          s = p.read_text(encoding='utf-8')
+
+          if '\nprofile:\n' not in s:
+              anchor = 'find-process-mode: always\n'
+              insert = '''find-process-mode: always\n\nprofile:\n  store-selected: true\n  store-fake-ip: true\n'''
+              if anchor not in s:
+                  raise SystemExit('find-process-mode anchor not found; aborting')
+              s = s.replace(anchor, insert, 1)
+
+          if 'cache-algorithm:' not in s:
+              anchor = '  respect-rules: true\n'
+              insert = '  respect-rules: true\n  cache-algorithm: arc\n'
+              if anchor not in s:
+                  raise SystemExit('DNS respect-rules anchor not found; aborting')
+              s = s.replace(anchor, insert, 1)
+
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit final stability tune
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Final low-risk Clash stability tune"
+          git push
