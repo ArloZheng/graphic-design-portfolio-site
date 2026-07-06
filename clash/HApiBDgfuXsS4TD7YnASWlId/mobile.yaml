@@ -68,9 +68,7 @@ proxy-groups:
       - "Oregon Residential"
 
 rules:
-  - GEOSITE,CN,DIRECT
-  - GEOIP,CN,DIRECT,no-resolve
-
+  # WebRTC/STUN must be evaluated before domestic GEOIP rules.
   - DOMAIN,stun.l.google.com,US UDP
   - DOMAIN,stun1.l.google.com,US UDP
   - DOMAIN,stun2.l.google.com,US UDP
@@ -82,5 +80,16 @@ rules:
   - DST-PORT,5349,US UDP
   - DST-PORT,19302,US UDP
 
+  # Android browser UDP is forced through US UDP before CN direct rules.
+  # PROCESS-NAME-REGEX can match Android package names in Mihomo.
+  - AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser)),(NETWORK,UDP)),US UDP
+
+  # Domestic traffic remains DIRECT for apps, calls and games.
+  - GEOSITE,CN,DIRECT
+  - GEOIP,CN,DIRECT,no-resolve
+
+  # Other foreign UDP uses the US UDP group.
   - NETWORK,UDP,US UDP
+
+  # Remaining foreign TCP/HTTPS uses the residential exit.
   - MATCH,Final Exit
