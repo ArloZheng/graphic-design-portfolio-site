@@ -1,0 +1,48 @@
+name: Patch Clash mobile config
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-clash-mobile.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch mobile config
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          s = p.read_text(encoding='utf-8')
+
+          s = s.replace('''  # CN domains use domestic resolver and then follow DIRECT routing.\n  nameserver-policy:\n    "geosite:cn":\n      - https://dns.alidns.com/dns-query\n\n''', '')
+
+          s = s.replace('''    udp: true\n    dialer-proxy: "Airport Front"''', '''    udp: false\n    dialer-proxy: "Airport Front"''')
+
+          old_groups = '''proxy-groups:\n  - name: "Airport Front"\n    type: select\n    use:\n      - airport\n\n  - name: "Final Exit"\n    type: select\n    proxies:\n      - "Oregon Residential"\n'''
+
+          new_groups = '''proxy-groups:\n  - name: "Airport Front"\n    type: select\n    use:\n      - airport\n\n  - name: "US UDP"\n    type: select\n    use:\n      - airport\n    filter: "(?i)(美国|美國|US|USA|United States|Los Angeles|Seattle|San Jose|Oregon|Portland|洛杉矶|洛杉磯|西雅图|西雅圖|圣何塞|聖何塞|俄勒冈|俄勒岡|波特兰|波特蘭)"\n\n  - name: "Final Exit"\n    type: select\n    proxies:\n      - "Oregon Residential"\n'''
+
+          s = s.replace(old_groups, new_groups)
+
+          old_rules = '''rules:\n  # Domestic domains and IPs go DIRECT.\n  - GEOSITE,CN,DIRECT\n  - GEOIP,CN,DIRECT,no-resolve\n\n  # Foreign UDP/WebRTC first tries the residential SOCKS5 exit.\n  - NETWORK,UDP,Final Exit\n\n  # Safety net: if the selected residential node is considered UDP-incapable,\n  # Mihomo continues matching downward; reject here instead of leaking via DIRECT.\n  - NETWORK,UDP,REJECT\n\n  # All remaining foreign TCP/HTTPS uses the residential exit.\n  - MATCH,Final Exit\n'''
+
+          new_rules = '''rules:\n  - GEOSITE,CN,DIRECT\n  - GEOIP,CN,DIRECT,no-resolve\n\n  - DOMAIN,stun.l.google.com,US UDP\n  - DOMAIN,stun1.l.google.com,US UDP\n  - DOMAIN,stun2.l.google.com,US UDP\n  - DOMAIN,stun3.l.google.com,US UDP\n  - DOMAIN,stun4.l.google.com,US UDP\n  - DOMAIN,stun.cloudflare.com,US UDP\n  - DOMAIN-SUFFIX,stun.twilio.com,US UDP\n  - DST-PORT,3478,US UDP\n  - DST-PORT,5349,US UDP\n  - DST-PORT,19302,US UDP\n\n  - NETWORK,UDP,US UDP\n  - MATCH,Final Exit\n'''
+
+          s = s.replace(old_rules, new_rules)
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit patched config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Patch mobile Clash routing"
+          git push
