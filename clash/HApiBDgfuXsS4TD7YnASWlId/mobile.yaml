@@ -18,11 +18,6 @@ dns:
   default-nameserver:
     - 223.5.5.5
 
-  # CN domains use domestic resolver and then follow DIRECT routing.
-  nameserver-policy:
-    "geosite:cn":
-      - https://dns.alidns.com/dns-query
-
   # Other domains use Cloudflare DoH; the DoH connection itself follows rules.
   nameserver:
     - https://1.1.1.1/dns-query
@@ -52,7 +47,7 @@ proxies:
     port: 443
     username: "mYtvKnngzRKG"
     password: "ChzwfDZ4UC"
-    udp: true
+    udp: false
     dialer-proxy: "Airport Front"
 
 proxy-groups:
@@ -61,22 +56,31 @@ proxy-groups:
     use:
       - airport
 
+  - name: "US UDP"
+    type: select
+    use:
+      - airport
+    filter: "(?i)(美国|美國|US|USA|United States|Los Angeles|Seattle|San Jose|Oregon|Portland|洛杉矶|洛杉磯|西雅图|西雅圖|圣何塞|聖何塞|俄勒冈|俄勒岡|波特兰|波特蘭)"
+
   - name: "Final Exit"
     type: select
     proxies:
       - "Oregon Residential"
 
 rules:
-  # Domestic domains and IPs go DIRECT.
   - GEOSITE,CN,DIRECT
   - GEOIP,CN,DIRECT,no-resolve
 
-  # Foreign UDP/WebRTC first tries the residential SOCKS5 exit.
-  - NETWORK,UDP,Final Exit
+  - DOMAIN,stun.l.google.com,US UDP
+  - DOMAIN,stun1.l.google.com,US UDP
+  - DOMAIN,stun2.l.google.com,US UDP
+  - DOMAIN,stun3.l.google.com,US UDP
+  - DOMAIN,stun4.l.google.com,US UDP
+  - DOMAIN,stun.cloudflare.com,US UDP
+  - DOMAIN-SUFFIX,stun.twilio.com,US UDP
+  - DST-PORT,3478,US UDP
+  - DST-PORT,5349,US UDP
+  - DST-PORT,19302,US UDP
 
-  # Safety net: if the selected residential node is considered UDP-incapable,
-  # Mihomo continues matching downward; reject here instead of leaking via DIRECT.
-  - NETWORK,UDP,REJECT
-
-  # All remaining foreign TCP/HTTPS uses the residential exit.
+  - NETWORK,UDP,US UDP
   - MATCH,Final Exit
