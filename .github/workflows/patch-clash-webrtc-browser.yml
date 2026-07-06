@@ -1,0 +1,40 @@
+name: Patch Clash WebRTC browser routing
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-clash-webrtc-browser.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reorder WebRTC rules and add Android browser UDP protection
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          s = p.read_text(encoding='utf-8')
+
+          old = '''rules:\n  - GEOSITE,CN,DIRECT\n  - GEOIP,CN,DIRECT,no-resolve\n\n  - DOMAIN,stun.l.google.com,US UDP\n  - DOMAIN,stun1.l.google.com,US UDP\n  - DOMAIN,stun2.l.google.com,US UDP\n  - DOMAIN,stun3.l.google.com,US UDP\n  - DOMAIN,stun4.l.google.com,US UDP\n  - DOMAIN,stun.cloudflare.com,US UDP\n  - DOMAIN-SUFFIX,stun.twilio.com,US UDP\n  - DST-PORT,3478,US UDP\n  - DST-PORT,5349,US UDP\n  - DST-PORT,19302,US UDP\n\n  - NETWORK,UDP,US UDP\n  - MATCH,Final Exit\n'''
+
+          new = '''rules:\n  # WebRTC/STUN must be evaluated before domestic GEOIP rules.\n  - DOMAIN,stun.l.google.com,US UDP\n  - DOMAIN,stun1.l.google.com,US UDP\n  - DOMAIN,stun2.l.google.com,US UDP\n  - DOMAIN,stun3.l.google.com,US UDP\n  - DOMAIN,stun4.l.google.com,US UDP\n  - DOMAIN,stun.cloudflare.com,US UDP\n  - DOMAIN-SUFFIX,stun.twilio.com,US UDP\n  - DST-PORT,3478,US UDP\n  - DST-PORT,5349,US UDP\n  - DST-PORT,19302,US UDP\n\n  # Android browser UDP is forced through US UDP before CN direct rules.\n  # PROCESS-NAME-REGEX can match Android package names in Mihomo.\n  - AND,((PROCESS-NAME-REGEX,(?i)(com\\.android\\.chrome|com\\.huawei\\.browser|com\\.microsoft\\.emmx|org\\.mozilla\\.firefox|com\\.brave\\.browser|com\\.opera\\..*|com\\.kiwibrowser\\.browser|com\\.vivaldi\\.browser)),(NETWORK,UDP)),US UDP\n\n  # Domestic traffic remains DIRECT for apps, calls and games.\n  - GEOSITE,CN,DIRECT\n  - GEOIP,CN,DIRECT,no-resolve\n\n  # Other foreign UDP uses the US UDP group.\n  - NETWORK,UDP,US UDP\n\n  # Remaining foreign TCP/HTTPS uses the residential exit.\n  - MATCH,Final Exit\n'''
+
+          if old not in s:
+              raise SystemExit('Expected rules block not found; aborting without changes')
+
+          p.write_text(s.replace(old, new), encoding='utf-8')
+
+      - name: Commit patched config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Protect Android browser WebRTC UDP routing"
+          git push
