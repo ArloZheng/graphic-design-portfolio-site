@@ -4,6 +4,7 @@ mode: rule
 log-level: info
 ipv6: false
 unified-delay: true
+find-process-mode: always
 
 dns:
   enable: true
@@ -82,7 +83,7 @@ rules:
 
   # Android browser UDP is forced through US UDP before CN direct rules.
   # PROCESS-NAME-REGEX can match Android package names in Mihomo.
-  - AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser)),(NETWORK,UDP)),US UDP
+  - AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US UDP
 
   # Domestic traffic remains DIRECT for apps, calls and games.
   - GEOSITE,CN,DIRECT
