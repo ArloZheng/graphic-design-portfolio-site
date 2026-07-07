@@ -812,11 +812,19 @@ proxy-groups:
   - US4-HY2
   - US5-HY2
   - US6-HY2
+- name: Google AI
+  type: select
+  use:
+  - airport
 - name: Final Exit
   type: select
   proxies:
   - Oregon Residential
 rules:
+- DOMAIN,aistudio.google.com,Google AI
+- DOMAIN,ai.google.dev,Google AI
+- DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google AI
+- DOMAIN-SUFFIX,makersuite.google.com,Google AI
 - DOMAIN,stun.l.google.com,US UDP
 - DOMAIN,stun1.l.google.com,US UDP
 - DOMAIN,stun2.l.google.com,US UDP
