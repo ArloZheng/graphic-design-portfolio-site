@@ -741,7 +741,7 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: Airport Front
+  dialer-proxy: "Airport Front"
 proxy-groups:
 - name: Airport Front
   type: select
@@ -834,8 +834,7 @@ rules:
 - AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - GEOSITE,GOOGLE,Google AI
-- AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US
-  UDP
+- AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US UDP
 - GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
 - NETWORK,UDP,US UDP
