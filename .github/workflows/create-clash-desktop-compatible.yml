@@ -1,0 +1,49 @@
+name: Create desktop-compatible Clash config
+
+on:
+  push:
+    paths:
+      - '.github/workflows/create-clash-desktop-compatible.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build desktop config from mobile config
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          src = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          dst = Path('clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml')
+          s = src.read_text(encoding='utf-8')
+
+          # Let Mihomo manage provider cache filename/location automatically for better desktop portability.
+          s = re.sub(r'(?m)^\s{4}path:\s*\./proxy_provider/airport\.yaml\s*\n', '', s, count=1)
+
+          old = r'''  - AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US UDP'''
+
+          new = r'''  - AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|Arc\.exe)),(NETWORK,UDP)),US UDP'''
+
+          if old not in s:
+              raise SystemExit('Expected Android browser UDP rule not found; aborting')
+
+          s = s.replace(old, new, 1)
+          s = s.replace('# Android browser UDP is forced through US UDP before CN direct rules.', '# Windows browser UDP is forced through US UDP before CN direct rules.', 1)
+          s = s.replace('# PROCESS-NAME-REGEX can match Android package names in Mihomo.', '# PROCESS-NAME-REGEX matches common Windows browser process names.', 1)
+
+          dst.write_text(s, encoding='utf-8')
+
+      - name: Commit desktop config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml
+          git diff --cached --quiet || git commit -m "Add desktop-compatible Clash Verge config"
+          git push
