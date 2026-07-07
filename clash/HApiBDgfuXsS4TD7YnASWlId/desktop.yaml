@@ -822,10 +822,10 @@ proxy-groups:
   proxies:
   - Oregon Residential
 rules:
-- DOMAIN,aistudio.google.com,Google AI
-- DOMAIN,ai.google.dev,Google AI
-- DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google AI
-- DOMAIN-SUFFIX,makersuite.google.com,Google AI
+- DOMAIN,aistudio.google.com,Final Exit
+- DOMAIN,ai.google.dev,Final Exit
+- DOMAIN-SUFFIX,generativelanguage.googleapis.com,Final Exit
+- DOMAIN-SUFFIX,makersuite.google.com,Final Exit
 - DOMAIN,stun.l.google.com,US UDP
 - DOMAIN,stun1.l.google.com,US UDP
 - DOMAIN,stun2.l.google.com,US UDP
@@ -840,7 +840,7 @@ rules:
 - AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- GEOSITE,GOOGLE,Google AI
+- GEOSITE,GOOGLE,Final Exit
 - AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US UDP
 - GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve

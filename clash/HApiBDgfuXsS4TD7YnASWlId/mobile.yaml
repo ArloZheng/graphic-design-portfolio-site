@@ -821,10 +821,10 @@ proxy-groups:
   proxies:
   - Oregon Residential
 rules:
-- DOMAIN,aistudio.google.com,Google AI
-- DOMAIN,ai.google.dev,Google AI
-- DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google AI
-- DOMAIN-SUFFIX,makersuite.google.com,Google AI
+- DOMAIN,aistudio.google.com,Final Exit
+- DOMAIN,ai.google.dev,Final Exit
+- DOMAIN-SUFFIX,generativelanguage.googleapis.com,Final Exit
+- DOMAIN-SUFFIX,makersuite.google.com,Final Exit
 - DOMAIN,stun.l.google.com,US UDP
 - DOMAIN,stun1.l.google.com,US UDP
 - DOMAIN,stun2.l.google.com,US UDP
@@ -839,9 +839,8 @@ rules:
 - AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- GEOSITE,GOOGLE,Google AI
-- AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US
-  UDP
+- GEOSITE,GOOGLE,Final Exit
+- AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US UDP
 - GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
 - NETWORK,UDP,US UDP
