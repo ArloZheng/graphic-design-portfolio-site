@@ -812,6 +812,14 @@ proxy-groups:
   proxies:
   - Oregon Residential
 rules:
+- AND,((DOMAIN-SUFFIX,chatgpt.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,oaistatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,oaiusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- DOMAIN-SUFFIX,chatgpt.com,Final Exit
+- DOMAIN-SUFFIX,openai.com,Final Exit
+- DOMAIN-SUFFIX,oaistatic.com,Final Exit
+- DOMAIN-SUFFIX,oaiusercontent.com,Final Exit
 - DOMAIN,aistudio.google.com,US Transit
 - DOMAIN,gemini.google.com,US Transit
 - DOMAIN,ai.google.dev,US Transit
