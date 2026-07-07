@@ -70,12 +70,22 @@ proxy-groups:
       - airport
     filter: "(?i)(美国|美國|US|USA|United States|Los Angeles|Seattle|San Jose|Oregon|Portland|洛杉矶|洛杉磯|西雅图|西雅圖|圣何塞|聖何塞|俄勒冈|俄勒岡|波特兰|波特蘭)"
 
+  - name: "Google AI"
+    type: select
+    use:
+      - airport
+
   - name: "Final Exit"
     type: select
     proxies:
       - "Oregon Residential"
 
 rules:
+  # Google AI Studio uses a dedicated selectable airport exit because some exits are region-blocked.
+  - DOMAIN,aistudio.google.com,Google AI
+  - DOMAIN,ai.google.dev,Google AI
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google AI
+  - DOMAIN-SUFFIX,makersuite.google.com,Google AI
   # WebRTC/STUN must be evaluated before domestic GEOIP rules.
   - DOMAIN,stun.l.google.com,US UDP
   - DOMAIN,stun1.l.google.com,US UDP
