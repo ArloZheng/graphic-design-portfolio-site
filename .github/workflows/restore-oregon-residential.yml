@@ -1,0 +1,29 @@
+name: Restore Oregon residential exit
+
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-oregon-residential.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore known-good mobile config
+        run: |
+          git show 04268b7d160b1d62329ef702b35c6673f4d185f5:clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml > clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+
+      - name: Commit restored config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Restore renewed Oregon residential exit"
+          git push
