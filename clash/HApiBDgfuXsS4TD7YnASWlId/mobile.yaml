@@ -103,6 +103,7 @@ rules:
   - AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
   - AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
   - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+  - GEOSITE,GOOGLE,Google AI
 
   # Android browser UDP is forced through US UDP before CN direct rules.
   # PROCESS-NAME-REGEX can match Android package names in Mihomo.

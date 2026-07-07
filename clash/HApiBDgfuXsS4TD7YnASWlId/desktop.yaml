@@ -814,8 +814,59 @@ proxy-groups:
   - US6-HY2
 - name: Google AI
   type: select
-  use:
-  - airport
+  proxies:
+  - HK-1
+  - HK-2
+  - HK-3
+  - HK-4
+  - HK-5
+  - HK-6
+  - HK2-HY2
+  - HK3-HY2
+  - HK4-HY2
+  - HK5-HY2
+  - JP-1
+  - JP-2
+  - JP-3
+  - JP-4
+  - JP-5
+  - JP-6
+  - JP6-HY2
+  - JP7-HY2
+  - JP8-HY2
+  - JP9-HY2
+  - JP10-HY2
+  - KR-1
+  - KR-2
+  - KR-3
+  - KR-4
+  - KR-5
+  - SG-1
+  - SG-2
+  - SG-3
+  - SG1-HY2
+  - SG2-HY2
+  - TW-1
+  - TW-2
+  - TW-3
+  - TW-4
+  - TW-5
+  - TW-6
+  - TW-7
+  - TW-8
+  - TW-9
+  - TW-10
+  - US-1TCP
+  - US-2TCP
+  - US-3TCP
+  - US-4TCP
+  - US-5TCP
+  - US1-HY2
+  - US2-HY2
+  - US3-HY2
+  - US4-HY2
+  - US5-HY2
+  - US6-HY2
 - name: Final Exit
   type: select
   proxies:
@@ -839,7 +890,9 @@ rules:
 - AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US UDP
+- GEOSITE,GOOGLE,Google AI
+- AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US
+  UDP
 - GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
 - NETWORK,UDP,US UDP
