@@ -798,16 +798,7 @@ proxy-groups:
   - US4-HY2
   - US5-HY2
   - US6-HY2
-- name: US UDP
-  type: select
-  proxies:
-  - US-1TCP
-  - US1-HY2
-  - US2-HY2
-  - US3-HY2
-  - US5-HY2
-  - US6-HY2
-- name: Google AI
+- name: US Transit
   type: select
   proxies:
   - US-1TCP
@@ -821,27 +812,27 @@ proxy-groups:
   proxies:
   - Oregon Residential
 rules:
-- DOMAIN,aistudio.google.com,Final Exit
-- DOMAIN,ai.google.dev,Final Exit
-- DOMAIN-SUFFIX,generativelanguage.googleapis.com,Final Exit
-- DOMAIN-SUFFIX,makersuite.google.com,Final Exit
-- DOMAIN,stun.l.google.com,US UDP
-- DOMAIN,stun1.l.google.com,US UDP
-- DOMAIN,stun2.l.google.com,US UDP
-- DOMAIN,stun3.l.google.com,US UDP
-- DOMAIN,stun4.l.google.com,US UDP
-- DOMAIN,stun.cloudflare.com,US UDP
-- DOMAIN-SUFFIX,stun.twilio.com,US UDP
-- DST-PORT,3478,US UDP
-- DST-PORT,5349,US UDP
-- DST-PORT,19302,US UDP
+- DOMAIN,aistudio.google.com,US Transit
+- DOMAIN,gemini.google.com,US Transit
+- DOMAIN,ai.google.dev,US Transit
+- DOMAIN,generativelanguage.googleapis.com,US Transit
+- DOMAIN,makersuite.google.com,US Transit
+- DOMAIN,stun.l.google.com,US Transit
+- DOMAIN,stun1.l.google.com,US Transit
+- DOMAIN,stun2.l.google.com,US Transit
+- DOMAIN,stun3.l.google.com,US Transit
+- DOMAIN,stun4.l.google.com,US Transit
+- DOMAIN,stun.cloudflare.com,US Transit
+- DOMAIN-SUFFIX,stun.twilio.com,US Transit
+- DST-PORT,3478,US Transit
+- DST-PORT,5349,US Transit
+- DST-PORT,19302,US Transit
 - AND,((DOMAIN-SUFFIX,google.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- GEOSITE,GOOGLE,Final Exit
-- AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US UDP
+- AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US Transit
 - GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
-- NETWORK,UDP,US UDP
+- NETWORK,UDP,US Transit
 - MATCH,Final Exit
