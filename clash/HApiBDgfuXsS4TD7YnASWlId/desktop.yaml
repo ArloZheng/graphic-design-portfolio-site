@@ -741,7 +741,7 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: "Airport Front"
+  dialer-proxy: Airport Front
 proxy-groups:
 - name: Airport Front
   type: select
@@ -800,16 +800,23 @@ proxy-groups:
   - US6-HY2
 - name: US UDP
   type: select
-  proxies: &id001
+  proxies:
   - US-1TCP
+  - US-2TCP
+  - US-3TCP
+  - US-4TCP
+  - US-5TCP
   - US1-HY2
   - US2-HY2
   - US3-HY2
+  - US4-HY2
   - US5-HY2
   - US6-HY2
 - name: Google AI
   type: select
-  proxies: *id001
+  use:
+  - airport
+  filter: ^(?:US-1TCP|US1-HY2|US2-HY2|US3-HY2|US5-HY2|US6-HY2)$
 - name: Final Exit
   type: select
   proxies:
