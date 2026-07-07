@@ -1,0 +1,61 @@
+name: Fix dedicated Google AI routing
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-google-ai-dedicated-routing.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PyYAML
+        run: python -m pip install pyyaml
+
+      - name: Patch mobile and desktop Google routing
+        shell: python
+        run: |
+          from pathlib import Path
+          import yaml
+
+          mobile = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          s = mobile.read_text(encoding='utf-8-sig')
+          anchor = '  - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT\n'
+          rule = '  - GEOSITE,GOOGLE,Google AI\n'
+          if rule not in s:
+              if anchor not in s:
+                  raise SystemExit('Mobile Google QUIC anchor not found')
+              s = s.replace(anchor, anchor + rule, 1)
+              mobile.write_text(s, encoding='utf-8')
+
+          desktop = Path('clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml')
+          data = yaml.safe_load(desktop.read_text(encoding='utf-8-sig'))
+          groups = data.get('proxy-groups', [])
+          airport_front = next((g for g in groups if g.get('name') == 'Airport Front'), None)
+          google_ai = next((g for g in groups if g.get('name') == 'Google AI'), None)
+          if not airport_front or not google_ai:
+              raise SystemExit('Desktop Airport Front or Google AI group missing')
+          google_ai.pop('use', None)
+          google_ai['proxies'] = list(airport_front.get('proxies', []))
+
+          rules = data.get('rules', [])
+          geosite_rule = 'GEOSITE,GOOGLE,Google AI'
+          if geosite_rule not in rules:
+              insert_after = 'AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT'
+              idx = rules.index(insert_after) + 1 if insert_after in rules else 0
+              rules.insert(idx, geosite_rule)
+          data['rules'] = rules
+          desktop.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding='utf-8')
+
+      - name: Commit routing fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml
+          git diff --cached --quiet || git commit -m "Fix dedicated Google AI routing through selectable airport exit"
+          git push
