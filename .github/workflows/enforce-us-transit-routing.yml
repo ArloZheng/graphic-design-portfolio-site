@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/enforce-us-transit-routing.yml'
+      - '.github/triggers/enforce-us-transit.txt'
 
 permissions:
   contents: write
