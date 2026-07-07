@@ -1,4 +1,4 @@
-﻿mixed-port: 7890
+mixed-port: 7890
 allow-lan: false
 mode: rule
 log-level: info
@@ -49,14 +49,15 @@ proxy-providers:
       interval: 600
 
 proxies:
-  - name: "Los Angeles Residential"
+  - name: "Oregon Residential"
     type: socks5
-    server: 69.3.236.240
+    server: 64.32.187.195
     port: 443
-    username: "kaTesmjxkMTt"
-    password: "96tRWiWn2O"
+    username: "mYtvKnngzRKG"
+    password: "ChzwfDZ4UC"
     udp: false
     dialer-proxy: "Airport Front"
+
 proxy-groups:
   - name: "Airport Front"
     type: select
@@ -72,7 +73,7 @@ proxy-groups:
   - name: "Final Exit"
     type: select
     proxies:
-      - "Los Angeles Residential"
+      - "Oregon Residential"
 
 rules:
   # WebRTC/STUN must be evaluated before domestic GEOIP rules.
