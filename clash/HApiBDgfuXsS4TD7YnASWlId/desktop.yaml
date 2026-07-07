@@ -1,0 +1,102 @@
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+ipv6: false
+tcp-concurrent: true
+keep-alive-interval: 15
+unified-delay: true
+find-process-mode: always
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  use-hosts: true
+  use-system-hosts: false
+  respect-rules: true
+  cache-algorithm: arc
+
+  # Bootstrap only: resolve DNS server hostnames and proxy-node hostnames.
+  default-nameserver:
+    - 223.5.5.5
+
+  # Other domains use Cloudflare DoH; the DoH connection itself follows rules.
+  nameserver:
+    - https://1.1.1.1/dns-query
+
+  # Dedicated bootstrap resolver for proxy-server hostnames to avoid dependency loops.
+  proxy-server-nameserver:
+    - 223.5.5.5
+
+proxy-providers:
+  airport:
+    type: http
+    url: "https://app.mitce.net/?sid=652472&token=srvjonxb"
+    interval: 3600
+    header:
+      User-Agent:
+        - "clash.meta"
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 600
+
+proxies:
+  - name: "Oregon Residential"
+    type: socks5
+    server: 64.32.187.195
+    port: 443
+    username: "mYtvKnngzRKG"
+    password: "ChzwfDZ4UC"
+    udp: false
+    dialer-proxy: "Airport Front"
+
+proxy-groups:
+  - name: "Airport Front"
+    type: select
+    use:
+      - airport
+
+  - name: "US UDP"
+    type: select
+    use:
+      - airport
+    filter: "(?i)(美国|美國|US|USA|United States|Los Angeles|Seattle|San Jose|Oregon|Portland|洛杉矶|洛杉磯|西雅图|西雅圖|圣何塞|聖何塞|俄勒冈|俄勒岡|波特兰|波特蘭)"
+
+  - name: "Final Exit"
+    type: select
+    proxies:
+      - "Oregon Residential"
+
+rules:
+  # WebRTC/STUN must be evaluated before domestic GEOIP rules.
+  - DOMAIN,stun.l.google.com,US UDP
+  - DOMAIN,stun1.l.google.com,US UDP
+  - DOMAIN,stun2.l.google.com,US UDP
+  - DOMAIN,stun3.l.google.com,US UDP
+  - DOMAIN,stun4.l.google.com,US UDP
+  - DOMAIN,stun.cloudflare.com,US UDP
+  - DOMAIN-SUFFIX,stun.twilio.com,US UDP
+  - DST-PORT,3478,US UDP
+  - DST-PORT,5349,US UDP
+  - DST-PORT,19302,US UDP
+
+  # Windows browser UDP is forced through US UDP before CN direct rules.
+  # PROCESS-NAME-REGEX matches common Windows browser process names.
+  - AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|Arc\.exe)),(NETWORK,UDP)),US UDP
+
+  # Domestic traffic remains DIRECT for apps, calls and games.
+  - GEOSITE,CN,DIRECT
+  - GEOIP,CN,DIRECT,no-resolve
+
+  # Other foreign UDP uses the US UDP group.
+  - NETWORK,UDP,US UDP
+
+  # Remaining foreign TCP/HTTPS uses the residential exit.
+  - MATCH,Final Exit
