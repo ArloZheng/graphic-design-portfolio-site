@@ -1,0 +1,99 @@
+name: Enforce US Transit routing
+
+on:
+  push:
+    paths:
+      - '.github/workflows/enforce-us-transit-routing.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PyYAML
+        run: python -m pip install --quiet pyyaml
+
+      - name: Backup and enforce routing
+        shell: python
+        run: |
+          from pathlib import Path
+          import shutil, yaml
+
+          root = Path('clash/HApiBDgfuXsS4TD7YnASWlId')
+          mobile_path = root / 'mobile.yaml'
+          desktop_path = root / 'desktop.yaml'
+          backup_dir = Path('backups/clash-before-enforce-us-transit')
+          backup_dir.mkdir(parents=True, exist_ok=True)
+          shutil.copy2(mobile_path, backup_dir / 'mobile.yaml')
+          shutil.copy2(desktop_path, backup_dir / 'desktop.yaml')
+
+          selected = ['US-1TCP','US1-HY2','US2-HY2','US3-HY2','US5-HY2','US6-HY2']
+
+          def patch_doc(path, mobile_mode):
+              doc = yaml.safe_load(path.read_text(encoding='utf-8-sig'))
+              groups = []
+              inserted = False
+              for g in doc.get('proxy-groups') or []:
+                  if isinstance(g, dict) and g.get('name') in {'US UDP','Google AI','US Transit'}:
+                      if not inserted:
+                          ng = {'name':'US Transit','type':'select'}
+                          if mobile_mode and doc.get('proxy-providers'):
+                              ng['use'] = ['airport']
+                              ng['filter'] = '^(?:' + '|'.join(selected) + ')$'
+                          else:
+                              ng['proxies'] = selected
+                          groups.append(ng)
+                          inserted = True
+                      continue
+                  groups.append(g)
+              if not inserted:
+                  ng = {'name':'US Transit','type':'select'}
+                  if mobile_mode and doc.get('proxy-providers'):
+                      ng['use']=['airport']; ng['filter']='^(?:'+'|'.join(selected)+')$'
+                  else:
+                      ng['proxies']=selected
+                  pos = next((i+1 for i,g in enumerate(groups) if isinstance(g,dict) and g.get('name')=='Airport Front'), len(groups))
+                  groups.insert(pos, ng)
+              doc['proxy-groups'] = groups
+
+              precise = [
+                  'DOMAIN,aistudio.google.com,US Transit',
+                  'DOMAIN,gemini.google.com,US Transit',
+                  'DOMAIN,ai.google.dev,US Transit',
+                  'DOMAIN,generativelanguage.googleapis.com,US Transit',
+                  'DOMAIN,makersuite.google.com,US Transit',
+              ]
+
+              out = []
+              for r in doc.get('rules') or []:
+                  if not isinstance(r, str):
+                      out.append(r); continue
+                  if r.startswith(('DOMAIN,aistudio.google.com,','DOMAIN,gemini.google.com,','DOMAIN,ai.google.dev,','DOMAIN,generativelanguage.googleapis.com,','DOMAIN-SUFFIX,generativelanguage.googleapis.com,','DOMAIN,makersuite.google.com,','DOMAIN-SUFFIX,makersuite.google.com,','GEOSITE,GOOGLE,')):
+                      continue
+                  r = r.replace(',US UDP', ',US Transit').replace(',Google AI', ',US Transit')
+                  out.append(r)
+              doc['rules'] = precise + out
+              path.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=100000), encoding='utf-8')
+
+          patch_doc(mobile_path, True)
+          patch_doc(desktop_path, False)
+
+          wf = Path('.github/workflows/create-clash-desktop-compatible.yml')
+          s = wf.read_text(encoding='utf-8')
+          s = s.replace("elif name == 'US UDP':", "elif name == 'US Transit':")
+          s = s.replace("US UDP group", "US Transit group")
+          s = s.replace(")),(NETWORK,UDP)),US UDP'", ")),(NETWORK,UDP)),US Transit'")
+          s = s.replace("US UDP nodes", "US Transit nodes")
+          wf.write_text(s, encoding='utf-8')
+
+      - name: Commit enforced routing
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml backups/clash-before-enforce-us-transit .github/workflows/create-clash-desktop-compatible.yml
+          git diff --cached --quiet || git commit -m "Enforce precise Google AI routing through US Transit"
+          git push
