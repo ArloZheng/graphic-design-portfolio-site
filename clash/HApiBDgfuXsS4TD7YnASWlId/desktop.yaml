@@ -827,6 +827,10 @@ rules:
 - DST-PORT,3478,US UDP
 - DST-PORT,5349,US UDP
 - DST-PORT,19302,US UDP
+- AND,((DOMAIN-SUFFIX,google.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US UDP
 - GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
