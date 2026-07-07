@@ -734,12 +734,12 @@ proxies:
   sni: us6.dexlos.com
   obfs: salamander
   obfs-password: xK9mN2pLq5vR8wB3
-- name: Oregon Residential
+- name: Los Angeles Residential
   type: socks5
-  server: 64.32.187.195
+  server: 69.3.236.240
   port: 443
-  username: mYtvKnngzRKG
-  password: ChzwfDZ4UC
+  username: kaTesmjxkMTt
+  password: 96tRWiWn2O
   udp: false
   dialer-proxy: Airport Front
 proxy-groups:
@@ -815,7 +815,7 @@ proxy-groups:
 - name: Final Exit
   type: select
   proxies:
-  - Oregon Residential
+  - Los Angeles Residential
 rules:
 - DOMAIN,stun.l.google.com,US UDP
 - DOMAIN,stun1.l.google.com,US UDP
