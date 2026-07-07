@@ -812,17 +812,18 @@ proxy-groups:
   proxies:
   - Oregon Residential
 rules:
-- DOMAIN,accounts.google.com,US Transit
-- DOMAIN,oauth2.googleapis.com,US Transit
-- DOMAIN,people.googleapis.com,US Transit
-- DOMAIN,accounts.google.com,US Transit
-- DOMAIN,oauth2.googleapis.com,US Transit
-- DOMAIN,people.googleapis.com,US Transit
 - DOMAIN,aistudio.google.com,US Transit
 - DOMAIN,gemini.google.com,US Transit
 - DOMAIN,ai.google.dev,US Transit
 - DOMAIN,generativelanguage.googleapis.com,US Transit
 - DOMAIN,makersuite.google.com,US Transit
+- DOMAIN,alkalimakersuite-pa.clients6.google.com,US Transit
+- DOMAIN,accounts.google.com,US Transit
+- DOMAIN,oauth2.googleapis.com,US Transit
+- DOMAIN,people.googleapis.com,US Transit
+- DOMAIN,identitytoolkit.googleapis.com,US Transit
+- DOMAIN,securetoken.googleapis.com,US Transit
+- DOMAIN,firebaseinstallations.googleapis.com,US Transit
 - DOMAIN,stun.l.google.com,US Transit
 - DOMAIN,stun1.l.google.com,US Transit
 - DOMAIN,stun2.l.google.com,US Transit
