@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python -m pip install --quiet pyyaml
-      - name: Patch subscription files
+      - name: Patch subscription files from Google AI whitelist
         shell: python
         run: |
           from pathlib import Path
@@ -23,12 +23,20 @@ jobs:
 
           root = Path('clash/HApiBDgfuXsS4TD7YnASWlId')
           nodes = ['US-1TCP','US1-HY2','US2-HY2','US3-HY2','US5-HY2','US6-HY2']
-          ai_rules = [
-              'DOMAIN,aistudio.google.com,US Transit',
-              'DOMAIN,gemini.google.com,US Transit',
-              'DOMAIN,ai.google.dev,US Transit',
-              'DOMAIN,generativelanguage.googleapis.com,US Transit',
-              'DOMAIN,makersuite.google.com,US Transit',
+
+          whitelist = [
+              'aistudio.google.com',
+              'gemini.google.com',
+              'ai.google.dev',
+              'generativelanguage.googleapis.com',
+              'makersuite.google.com',
+              'alkalimakersuite-pa.clients6.google.com',
+              'accounts.google.com',
+              'oauth2.googleapis.com',
+              'people.googleapis.com',
+              'identitytoolkit.googleapis.com',
+              'securetoken.googleapis.com',
+              'firebaseinstallations.googleapis.com',
           ]
 
           for filename in ['mobile.yaml', 'desktop.yaml']:
@@ -37,49 +45,57 @@ jobs:
 
               groups = []
               added = False
-              for g in doc.get('proxy-groups', []):
-                  if isinstance(g, dict) and g.get('name') in ['US UDP', 'Google AI', 'US Transit']:
+              for group in doc.get('proxy-groups', []):
+                  if isinstance(group, dict) and group.get('name') in ['US UDP', 'Google AI', 'US Transit']:
                       if not added:
                           groups.append({'name':'US Transit','type':'select','proxies':nodes})
                           added = True
                       continue
-                  groups.append(g)
+                  groups.append(group)
               doc['proxy-groups'] = groups
 
-              rules = []
-              for r in doc.get('rules', []):
-                  if not isinstance(r, str):
-                      rules.append(r)
+              old = []
+              for rule in doc.get('rules', []):
+                  if not isinstance(rule, str):
+                      old.append(rule)
                       continue
-                  if r.startswith(('DOMAIN,aistudio.google.com,','DOMAIN,gemini.google.com,','DOMAIN,ai.google.dev,','DOMAIN,generativelanguage.googleapis.com,','DOMAIN-SUFFIX,generativelanguage.googleapis.com,','DOMAIN,makersuite.google.com,','DOMAIN-SUFFIX,makersuite.google.com,','GEOSITE,GOOGLE,')):
+                  if rule.startswith('DOMAIN,'):
+                      parts = rule.split(',')
+                      if len(parts) >= 3 and parts[1] in whitelist:
+                          continue
+                  if rule.startswith('GEOSITE,GOOGLE,'):
                       continue
-                  rules.append(r.replace(',US UDP', ',US Transit').replace(',Google AI', ',US Transit'))
-              doc['rules'] = ai_rules + rules
+                  old.append(rule.replace(',US UDP', ',US Transit').replace(',Google AI', ',US Transit'))
 
+              whitelist_rules = [f'DOMAIN,{domain},US Transit' for domain in whitelist]
+              doc['rules'] = whitelist_rules + old
               path.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=100000), encoding='utf-8')
 
-      - name: Validate YAML
+      - name: Validate YAML and whitelist routing
         run: |
           python - <<'PY'
           import yaml
           from pathlib import Path
           root = Path('clash/HApiBDgfuXsS4TD7YnASWlId')
-          for f in ['mobile.yaml','desktop.yaml']:
-              doc = yaml.safe_load((root/f).read_text(encoding='utf-8'))
+          for filename in ['mobile.yaml','desktop.yaml']:
+              doc = yaml.safe_load((root/filename).read_text(encoding='utf-8'))
               names = [g.get('name') for g in doc.get('proxy-groups',[]) if isinstance(g,dict)]
               assert names.count('US Transit') == 1
               assert 'US UDP' not in names
               assert 'Google AI' not in names
-              assert 'DOMAIN,aistudio.google.com,US Transit' in doc['rules']
-              assert 'DOMAIN,gemini.google.com,US Transit' in doc['rules']
-              assert 'NETWORK,UDP,US Transit' in doc['rules']
-              assert doc['rules'][-1] == 'MATCH,Final Exit'
+              rules = doc['rules']
+              assert 'DOMAIN,aistudio.google.com,US Transit' in rules
+              assert 'DOMAIN,gemini.google.com,US Transit' in rules
+              assert 'DOMAIN,alkalimakersuite-pa.clients6.google.com,US Transit' in rules
+              assert 'NETWORK,UDP,US Transit' in rules
+              assert rules[-1] == 'MATCH,Final Exit'
+          print('Whitelist routing checks passed')
           PY
 
-      - name: Commit
+      - name: Commit updated subscription files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml
-          git diff --cached --quiet || git commit -m "Unify Google AI and UDP under US Transit"
+          git diff --cached --quiet || git commit -m "Route Google AI whitelist through US Transit"
           git push
