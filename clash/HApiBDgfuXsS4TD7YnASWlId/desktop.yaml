@@ -815,6 +815,9 @@ rules:
 - DOMAIN,accounts.google.com,US Transit
 - DOMAIN,oauth2.googleapis.com,US Transit
 - DOMAIN,people.googleapis.com,US Transit
+- DOMAIN,accounts.google.com,US Transit
+- DOMAIN,oauth2.googleapis.com,US Transit
+- DOMAIN,people.googleapis.com,US Transit
 - DOMAIN,aistudio.google.com,US Transit
 - DOMAIN,gemini.google.com,US Transit
 - DOMAIN,ai.google.dev,US Transit
