@@ -1,0 +1,47 @@
+name: Add dedicated Google AI route group
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-google-ai-route-group.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch mobile config
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          s = p.read_text(encoding='utf-8-sig')
+
+          if 'name: "Google AI"' not in s:
+              group_anchor = '''  - name: "US UDP"\n    type: select\n    use:\n      - airport\n    filter: "(?i)(美国|美國|US|USA|United States|Los Angeles|Seattle|San Jose|Oregon|Portland|洛杉矶|洛杉磯|西雅图|西雅圖|圣何塞|聖何塞|俄勒冈|俄勒岡|波特兰|波特蘭)"\n\n'''
+              group_block = group_anchor + '''  - name: "Google AI"\n    type: select\n    use:\n      - airport\n\n'''
+              if group_anchor not in s:
+                  raise SystemExit('US UDP group anchor not found; aborting')
+              s = s.replace(group_anchor, group_block, 1)
+
+          if 'DOMAIN,aistudio.google.com,Google AI' not in s:
+              rules_anchor = 'rules:\n'
+              ai_rules = '''rules:\n  # Google AI Studio uses a dedicated selectable airport exit because some exits are region-blocked.\n  - DOMAIN,aistudio.google.com,Google AI\n  - DOMAIN,ai.google.dev,Google AI\n  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google AI\n  - DOMAIN-SUFFIX,makersuite.google.com,Google AI\n'''
+              if rules_anchor not in s:
+                  raise SystemExit('rules anchor not found; aborting')
+              s = s.replace(rules_anchor, ai_rules, 1)
+
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit mobile config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Route Google AI Studio through dedicated selectable airport exit"
+          git push
