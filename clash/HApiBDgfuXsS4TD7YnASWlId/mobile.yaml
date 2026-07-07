@@ -88,6 +88,12 @@ rules:
   - DST-PORT,5349,US UDP
   - DST-PORT,19302,US UDP
 
+  # Keep Google account/AI Studio sessions on the residential TCP exit by disabling QUIC/HTTP3 for Google UDP 443.
+  - AND,((DOMAIN-SUFFIX,google.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+  - AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+  - AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+  - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+
   # Android browser UDP is forced through US UDP before CN direct rules.
   # PROCESS-NAME-REGEX can match Android package names in Mihomo.
   - AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US UDP
