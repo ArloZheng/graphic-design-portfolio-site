@@ -1,10 +1,12 @@
-name: Sync desktop Clash config from mobile
+name: Build desktop Clash config from mobile and airport subscription
 
 on:
   push:
     paths:
       - 'clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
       - '.github/workflows/create-clash-desktop-compatible.yml'
+  schedule:
+    - cron: '17 */6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -16,36 +18,94 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build desktop config from mobile config
+      - name: Install YAML dependency
+        run: python -m pip install --quiet pyyaml requests
+
+      - name: Build desktop config with inline airport nodes
         shell: python
         run: |
           from pathlib import Path
           import re
+          import requests
+          import yaml
 
           src = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
           dst = Path('clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml')
-          s = src.read_text(encoding='utf-8')
 
-          # Desktop portability: let Mihomo manage provider cache path automatically.
-          s = re.sub(r'(?m)^\s{4}path:\s*\./proxy_provider/airport\.yaml\s*\n', '', s, count=1)
+          mobile = yaml.safe_load(src.read_text(encoding='utf-8'))
+          if not isinstance(mobile, dict):
+              raise SystemExit('mobile.yaml is not a YAML mapping; aborting')
 
-          # Replace Android browser/WebView process matching with Windows browser process matching.
-          old = r'''  - AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US UDP'''
-          new = r'''  - AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US UDP'''
+          provider = (mobile.get('proxy-providers') or {}).get('airport') or {}
+          url = provider.get('url')
+          if not url:
+              raise SystemExit('airport provider URL missing; aborting')
 
-          if old not in s:
-              raise SystemExit('Expected Android browser UDP rule not found; aborting without changing desktop.yaml')
+          headers = {'User-Agent': 'clash.meta'}
+          response = requests.get(url, headers=headers, timeout=45)
+          response.raise_for_status()
 
-          s = s.replace(old, new, 1)
-          s = s.replace('# Android browser UDP is forced through US UDP before CN direct rules.', '# Windows browser UDP is forced through US UDP before CN direct rules.', 1)
-          s = s.replace('# PROCESS-NAME-REGEX can match Android package names in Mihomo.', '# PROCESS-NAME-REGEX matches common Windows browser process names.', 1)
+          try:
+              airport_doc = yaml.safe_load(response.text)
+          except Exception as exc:
+              raise SystemExit(f'airport subscription is not parseable YAML: {exc}')
 
-          dst.write_text(s, encoding='utf-8')
+          airport_nodes = airport_doc.get('proxies') if isinstance(airport_doc, dict) else None
+          if not isinstance(airport_nodes, list) or not airport_nodes:
+              raise SystemExit('airport subscription did not return a non-empty Clash/Mihomo proxies list; preserving existing desktop.yaml')
+
+          # Desktop version uses inline nodes to avoid Clash Verge Rev provider COMPATIBLE/cache issues.
+          mobile.pop('proxy-providers', None)
+
+          existing = mobile.get('proxies') or []
+          mobile['proxies'] = airport_nodes + existing
+
+          all_names = [p.get('name') for p in airport_nodes if isinstance(p, dict) and p.get('name')]
+          us_re = re.compile(r'(美国|美國|US|USA|United States|Los Angeles|Seattle|San Jose|Oregon|Portland|洛杉矶|洛杉磯|西雅图|西雅圖|圣何塞|聖何塞|俄勒冈|俄勒岡|波特兰|波特蘭)', re.I)
+          us_names = [name for name in all_names if us_re.search(str(name))]
+
+          if not all_names:
+              raise SystemExit('airport subscription proxies have no usable names; aborting')
+          if not us_names:
+              raise SystemExit('no US nodes matched for desktop US UDP group; aborting')
+
+          for group in mobile.get('proxy-groups') or []:
+              if not isinstance(group, dict):
+                  continue
+              name = group.get('name')
+              if name == 'Airport Front':
+                  group.pop('use', None)
+                  group.pop('filter', None)
+                  group['proxies'] = all_names
+              elif name == 'US UDP':
+                  group.pop('use', None)
+                  group.pop('filter', None)
+                  group['proxies'] = us_names
+
+          # Replace Android browser/WebView UDP process rule with Windows browser process names.
+          rules = mobile.get('rules') or []
+          android_marker = 'com\\.android\\.chrome'
+          win_rule = r'AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US UDP'
+          replaced = False
+          for i, rule in enumerate(rules):
+              if isinstance(rule, str) and android_marker in rule:
+                  rules[i] = win_rule
+                  replaced = True
+                  break
+          if not replaced:
+              raise SystemExit('Android browser UDP rule not found; aborting without changing desktop.yaml')
+
+          dst.write_text(
+              yaml.safe_dump(mobile, allow_unicode=True, sort_keys=False, width=100000),
+              encoding='utf-8'
+          )
+
+          print(f'Built desktop.yaml with {len(all_names)} airport nodes and {len(us_names)} US UDP nodes')
 
       - name: Commit desktop config
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml
-          git diff --cached --quiet || git commit -m "Sync desktop Clash config from mobile"
+          git diff --cached --quiet || git commit -m "Build desktop Clash config with inline airport nodes"
           git push
