@@ -1,0 +1,42 @@
+name: Stabilize Google AI Studio session routing
+
+on:
+  push:
+    paths:
+      - '.github/workflows/google-ai-studio-session-stability.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add Google QUIC fallback rules to mobile config
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          s = p.read_text(encoding='utf-8-sig')
+
+          anchor = '  - DST-PORT,19302,US UDP\n\n'
+          block = '''  - DST-PORT,19302,US UDP\n\n  # Keep Google account/AI Studio sessions on the residential TCP exit by disabling QUIC/HTTP3 for Google UDP 443.\n  - AND,((DOMAIN-SUFFIX,google.com),(NETWORK,UDP),(DST-PORT,443)),REJECT\n  - AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT\n  - AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT\n  - AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT\n\n'''
+
+          if 'DOMAIN-SUFFIX,googleapis.com' in s:
+              print('Rules already present; no change needed')
+          else:
+              if anchor not in s:
+                  raise SystemExit('STUN anchor not found; aborting')
+              s = s.replace(anchor, block, 1)
+              p.write_text(s, encoding='utf-8')
+
+      - name: Commit mobile update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Keep Google AI Studio sessions on residential TCP exit"
+          git push
