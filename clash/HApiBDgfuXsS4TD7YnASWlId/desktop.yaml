@@ -741,11 +741,19 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: Airport Front
+  dialer-proxy: Front Node - Airport Front
+- name: Alabama Residential Temp
+  type: socks5
+  server: gate-sg.ipfoxy.io
+  port: 58688
+  username: customer-iVTzXV0fHz-cc-US-st-Alabama-city-Alabaster-sessid-1783520284_10000
+  password: Vowd7BsAE0M71c6
+  udp: false
+  dialer-proxy: Front Node - Airport Front
 proxy-groups:
 - name: Airport Front
   type: select
-  proxies:
+  proxies: &airport_front_nodes
   - HK-1
   - HK-2
   - HK-3
@@ -798,6 +806,9 @@ proxy-groups:
   - US4-HY2
   - US5-HY2
   - US6-HY2
+- name: Front Node - Airport Front
+  type: select
+  proxies: *airport_front_nodes
 - name: US Transit
   type: select
   proxies:
@@ -811,6 +822,7 @@ proxy-groups:
   type: select
   proxies:
   - Oregon Residential
+  - Alabama Residential Temp
 rules:
 - DOMAIN,stun.l.google.com,US Transit
 - DOMAIN,stun1.l.google.com,US Transit
