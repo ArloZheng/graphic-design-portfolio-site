@@ -43,7 +43,7 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: Airport Front
+  dialer-proxy: 前置节点 Airport Front
 - name: Alabama Residential Temp
   type: socks5
   server: gate-sg.ipfoxy.io
@@ -51,9 +51,13 @@ proxies:
   username: customer-iVTzXV0fHz-cc-US-st-Alabama-city-Alabaster-sessid-1783520284_10000
   password: Vowd7BsAE0M71c6
   udp: false
-  dialer-proxy: Airport Front
+  dialer-proxy: 前置节点 Airport Front
 proxy-groups:
 - name: Airport Front
+  type: select
+  use:
+  - airport
+- name: 前置节点 Airport Front
   type: select
   use:
   - airport
