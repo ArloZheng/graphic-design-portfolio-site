@@ -736,7 +736,7 @@ proxies:
   obfs-password: xK9mN2pLq5vR8wB3
 - name: Oregon Residential
   type: socks5
-  server: 64.32.187.195
+  server: 205.214.55.251
   port: 443
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
