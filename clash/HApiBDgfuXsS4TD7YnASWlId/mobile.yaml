@@ -116,6 +116,7 @@ proxy-providers:
   airport:
     type: http
     url: https://raw.githubusercontent.com/ArloZheng/graphic-design-portfolio-site/main/clash/HApiBDgfuXsS4TD7YnASWlId/airport.yaml
+    dialer-proxy: DIRECT
     interval: 3600
     path: ./proxy_provider/airport.yaml
     health-check:
