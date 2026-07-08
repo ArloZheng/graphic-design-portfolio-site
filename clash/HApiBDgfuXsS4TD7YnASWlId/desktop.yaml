@@ -742,11 +742,11 @@ proxies:
   password: ChzwfDZ4UC
   udp: false
   dialer-proxy: Front Node - Airport Front
-- name: Alabama Residential Temp
+- name: Temp Residential 47.215.192.185
   type: socks5
   server: gate-sg.ipfoxy.io
   port: 58688
-  username: customer-iVTzXV0fHz-cc-US-st-Alabama-city-Alabaster-sessid-1783520284_10000
+  username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
   password: Vowd7BsAE0M71c6
   udp: false
   dialer-proxy: Front Node - Airport Front
@@ -822,7 +822,7 @@ proxy-groups:
   type: select
   proxies:
   - Oregon Residential
-  - Alabama Residential Temp
+  - Temp Residential 47.215.192.185
 rules:
 - DOMAIN,stun.l.google.com,US Transit
 - DOMAIN,stun1.l.google.com,US Transit
