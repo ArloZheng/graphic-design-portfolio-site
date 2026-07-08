@@ -6,7 +6,7 @@ ipv6: false
 tcp-concurrent: true
 keep-alive-interval: 15
 unified-delay: true
-find-process-mode: strict
+find-process-mode: always
 profile:
   store-selected: true
   store-fake-ip: true
@@ -61,12 +61,25 @@ proxy-groups:
 rules:
 - AND,((DOMAIN-SUFFIX,chatgpt.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,auth.openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,api.openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,oaistatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,oaiusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,chat.openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,chatgpt.livekit.cloud),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,statsigapi.net),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
 - DOMAIN-SUFFIX,openai.com,Final Exit
+- DOMAIN-SUFFIX,auth.openai.com,Final Exit
+- DOMAIN-SUFFIX,api.openai.com,Final Exit
 - DOMAIN-SUFFIX,oaistatic.com,Final Exit
 - DOMAIN-SUFFIX,oaiusercontent.com,Final Exit
+- DOMAIN-SUFFIX,chat.openai.com,Final Exit
+- DOMAIN-SUFFIX,chatgpt.livekit.cloud,Final Exit
+- DOMAIN-SUFFIX,statsigapi.net,Final Exit
+- DOMAIN-SUFFIX,intercom.io,Final Exit
+- DOMAIN-SUFFIX,intercomcdn.com,Final Exit
+- DOMAIN-SUFFIX,sentry.io,Final Exit
 - DOMAIN,stun.l.google.com,US Transit
 - DOMAIN,stun1.l.google.com,US Transit
 - DOMAIN,stun2.l.google.com,US Transit
