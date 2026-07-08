@@ -85,3 +85,5 @@ rules:
 - GEOIP,CN,DIRECT,no-resolve
 - NETWORK,UDP,US Transit
 - MATCH,Final Exit
+
+# republished-original-mobile-link
