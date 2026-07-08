@@ -44,6 +44,14 @@ proxies:
   password: ChzwfDZ4UC
   udp: false
   dialer-proxy: Airport Front
+- name: Alabama Residential Temp
+  type: socks5
+  server: gate-sg.ipfoxy.io
+  port: 58688
+  username: customer-iVTzXV0fHz-cc-US-st-Alabama-city-Alabaster-sessid-1783520284_10000
+  password: Vowd7BsAE0M71c6
+  udp: false
+  dialer-proxy: Airport Front
 proxy-groups:
 - name: Airport Front
   type: select
@@ -58,6 +66,7 @@ proxy-groups:
   type: select
   proxies:
   - Oregon Residential
+  - Alabama Residential Temp
 rules:
 - AND,((DOMAIN-SUFFIX,chatgpt.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
