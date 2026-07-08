@@ -14,14 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python -m pip install --quiet pyyaml
-      - name: Apply exact AI whitelist routes
+      - name: Keep whitelist empty and restore default fixed-IP routing
         shell: python
         run: |
           from pathlib import Path
           import yaml
 
           root = Path('clash/HApiBDgfuXsS4TD7YnASWlId')
-          whitelist = [
+
+          previous_whitelist = {
               'aistudio.google.com',
               'gemini.google.com',
               'ai.google.dev',
@@ -34,28 +35,68 @@ jobs:
               'identitytoolkit.googleapis.com',
               'securetoken.googleapis.com',
               'firebaseinstallations.googleapis.com',
-          ]
+          }
+
+          whitelist = []
 
           for filename in ['mobile.yaml', 'desktop.yaml']:
               path = root / filename
               doc = yaml.safe_load(path.read_text(encoding='utf-8-sig'))
               cleaned = []
+
               for rule in doc.get('rules', []):
                   if not isinstance(rule, str):
                       cleaned.append(rule)
                       continue
+
                   if rule.startswith('DOMAIN,'):
                       parts = rule.split(',')
-                      if len(parts) >= 3 and parts[1] in whitelist:
+                      if len(parts) >= 3 and parts[1] in previous_whitelist:
                           continue
+
                   cleaned.append(rule)
-              doc['rules'] = [f'DOMAIN,{domain},US Transit' for domain in whitelist] + cleaned
+
+              whitelist_rules = [f'DOMAIN,{domain},US Transit' for domain in whitelist]
+              doc['rules'] = whitelist_rules + cleaned
               path.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=100000), encoding='utf-8')
+
+      - name: Validate routing
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+
+          root = Path('clash/HApiBDgfuXsS4TD7YnASWlId')
+          forbidden = {
+              'aistudio.google.com',
+              'gemini.google.com',
+              'ai.google.dev',
+              'generativelanguage.googleapis.com',
+              'makersuite.google.com',
+              'alkalimakersuite-pa.clients6.google.com',
+              'accounts.google.com',
+              'oauth2.googleapis.com',
+              'people.googleapis.com',
+              'identitytoolkit.googleapis.com',
+              'securetoken.googleapis.com',
+              'firebaseinstallations.googleapis.com',
+          }
+
+          for filename in ['mobile.yaml', 'desktop.yaml']:
+              doc = yaml.safe_load((root / filename).read_text(encoding='utf-8'))
+              for rule in doc.get('rules', []):
+                  if isinstance(rule, str) and rule.startswith('DOMAIN,'):
+                      parts = rule.split(',')
+                      if len(parts) >= 3 and parts[1] in forbidden:
+                          raise SystemExit(f'{filename}: stale whitelist rule remains: {rule}')
+              assert doc['rules'][-1] == 'MATCH,Final Exit'
+          print('Whitelist is empty; former Google AI domains now fall through to Final Exit')
+          PY
 
       - name: Commit whitelist routing
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml
-          git diff --cached --quiet || git commit -m "Apply maintainable Google AI whitelist routing"
+          git diff --cached --quiet || git commit -m "Empty AI whitelist and restore fixed-IP routing"
           git push
