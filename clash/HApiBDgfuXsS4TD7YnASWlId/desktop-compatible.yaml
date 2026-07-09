@@ -3,7 +3,6 @@ allow-lan: false
 mode: rule
 log-level: info
 ipv6: false
-# subscription-build: 2026-07-09-2018-virginia-exit
 dns:
   enable: true
   ipv6: false
@@ -748,12 +747,12 @@ proxies:
   udp: false
   dialer-proxy: US Transit
   ip-version: ipv4
-- name: 弗吉尼亚州利斯堡 199.48.180.238
+- name: 纽约州纽约市 48.47.69.223
   type: socks5
-  server: 199.48.180.238
+  server: 48.47.69.223
   port: 12324
-  username: 14a0067282ee1
-  password: e16d4ca0e8
+  username: 14af470c8865b
+  password: b640bc7487
   udp: true
   dialer-proxy: US Transit
   ip-version: ipv4
@@ -831,7 +830,7 @@ proxy-groups:
   url: http://captive.apple.com/hotspot-detect.html
   interval: 300
   proxies:
-  - 弗吉尼亚州利斯堡 199.48.180.238
+  - 纽约州纽约市 48.47.69.223
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
