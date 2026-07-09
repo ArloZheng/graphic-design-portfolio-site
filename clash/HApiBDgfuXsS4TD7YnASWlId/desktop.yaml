@@ -753,10 +753,10 @@ proxies:
 - name: 密西西比州内特尔顿 45.62.175.121
   type: socks5
   server: 45.62.175.121
-  port: 12323
+  port: 12324
   username: 14a732fc202eb
   password: f761f984da
-  udp: false
+  udp: true
   dialer-proxy: Front Node - Airport Front
 proxy-groups:
 - name: Airport Front
