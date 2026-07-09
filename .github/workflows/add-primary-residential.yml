@@ -1,5 +1,6 @@
 name: Add primary residential proxy
 
+# retrigger
 on:
   push:
     paths:
@@ -29,7 +30,6 @@ jobs:
           def update(path, desktop=False):
               d=yaml.safe_load(path.read_text(encoding='utf-8-sig'))
               proxies=d.get('proxies',[])
-
               rename={
                   'Oregon Residential':'Oregon 205.214.55.251',
                   'Temp Residential 47.215.192.185':'Flagstaff AZ 47.215.192.185'
@@ -40,7 +40,7 @@ jobs:
 
               new_name='Nettleton MS 45.62.175.121'
               proxies=[p for p in proxies if not (isinstance(p,dict) and p.get('name')==new_name)]
-              new_proxy={
+              proxies.append({
                   'name':new_name,
                   'type':'socks5',
                   'server':host,
@@ -49,17 +49,12 @@ jobs:
                   'password':password,
                   'udp':False,
                   'dialer-proxy':'Front Node - Airport Front' if desktop else 'Airport Front'
-              }
-              proxies.append(new_proxy)
+              })
               d['proxies']=proxies
 
               for g in d.get('proxy-groups',[]):
                   if g.get('name')=='Final Exit':
-                      g['proxies']=[
-                          new_name,
-                          'Oregon 205.214.55.251',
-                          'Flagstaff AZ 47.215.192.185'
-                      ]
+                      g['proxies']=[new_name,'Oregon 205.214.55.251','Flagstaff AZ 47.215.192.185']
 
               path.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=100000),encoding='utf-8')
 
