@@ -12,7 +12,14 @@ dns:
   - 223.5.5.5
   - 119.29.29.29
   nameserver:
-  - https://1.1.1.1/dns-query
+  - https://dns.alidns.com/dns-query
+  - https://doh.pub/dns-query
+  - 223.5.5.5
+  - 119.29.29.29
+  proxy-server-nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
+  - https://dns.alidns.com/dns-query
 proxies:
 - name: HK-1
   type: vless
@@ -729,7 +736,8 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: Airport Front
+  dialer-proxy: US Transit
+  ip-version: ipv4
 - name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
   server: gate-sg.ipfoxy.io
@@ -737,7 +745,8 @@ proxies:
   username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
   password: Vowd7BsAE0M71c6
   udp: false
-  dialer-proxy: Airport Front
+  dialer-proxy: US Transit
+  ip-version: ipv4
 - name: 密西西比州内特尔顿 45.62.175.121
   type: socks5
   server: 45.62.175.121
@@ -745,10 +754,11 @@ proxies:
   username: 14a732fc202eb
   password: f761f984da
   udp: true
-  dialer-proxy: Airport Front
+  dialer-proxy: US Transit
+  ip-version: ipv4
 proxy-groups:
 - name: Airport Front
-  type: select
+  type: url-test
   proxies:
   - HK-1
   - HK-2
@@ -802,8 +812,11 @@ proxy-groups:
   - US4-HY2
   - US5-HY2
   - US6-HY2
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 80
 - name: US Transit
-  type: select
+  type: fallback
   proxies:
   - US-1TCP
   - US1-HY2
@@ -811,6 +824,8 @@ proxy-groups:
   - US3-HY2
   - US5-HY2
   - US6-HY2
+  url: https://www.gstatic.com/generate_204
+  interval: 300
 - name: Final Exit
   type: select
   proxies:
