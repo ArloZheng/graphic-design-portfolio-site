@@ -747,12 +747,12 @@ proxies:
   udp: false
   dialer-proxy: US Transit
   ip-version: ipv4
-- name: 纽约州纽约市 48.47.69.223
+- name: 纽约州纽约市 168.158.77.44
   type: socks5
-  server: 48.47.69.223
+  server: 168.158.77.44
   port: 12324
-  username: 14af470c8865b
-  password: b640bc7487
+  username: 14a9960994126
+  password: 050da49f1e
   udp: true
   dialer-proxy: US Transit
   ip-version: ipv4
@@ -830,7 +830,7 @@ proxy-groups:
   url: http://captive.apple.com/hotspot-detect.html
   interval: 300
   proxies:
-  - 纽约州纽约市 48.47.69.223
+  - 纽约州纽约市 168.158.77.44
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
