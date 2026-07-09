@@ -3,6 +3,7 @@ allow-lan: false
 mode: rule
 log-level: info
 ipv6: false
+# subscription-build: 2026-07-09-2018-virginia-exit
 dns:
   enable: true
   ipv6: false
