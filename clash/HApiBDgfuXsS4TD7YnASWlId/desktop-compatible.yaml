@@ -1,0 +1,64 @@
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+ipv6: false
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  default-nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
+  nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
+  - https://1.1.1.1/dns-query
+proxies:
+- name: 俄勒冈州 205.214.55.251
+  type: socks5
+  server: 205.214.55.251
+  port: 443
+  username: mYtvKnngzRKG
+  password: ChzwfDZ4UC
+  udp: false
+- name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  type: socks5
+  server: gate-sg.ipfoxy.io
+  port: 58688
+  username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
+  password: Vowd7BsAE0M71c6
+  udp: false
+- name: 密西西比州内特尔顿 45.62.175.121
+  type: socks5
+  server: 45.62.175.121
+  port: 12324
+  username: 14a732fc202eb
+  password: f761f984da
+  udp: true
+proxy-groups:
+- name: Airport Front
+  type: select
+  proxies: &id001
+  - 密西西比州内特尔顿 45.62.175.121
+  - 俄勒冈州 205.214.55.251
+  - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+- name: US Transit
+  type: select
+  proxies: *id001
+- name: Final Exit
+  type: select
+  proxies: *id001
+rules:
+- DOMAIN-SUFFIX,chatgpt.com,Final Exit
+- DOMAIN-SUFFIX,openai.com,Final Exit
+- DOMAIN-SUFFIX,auth.openai.com,Final Exit
+- DOMAIN-SUFFIX,api.openai.com,Final Exit
+- DOMAIN-SUFFIX,oaistatic.com,Final Exit
+- DOMAIN-SUFFIX,oaiusercontent.com,Final Exit
+- DOMAIN-SUFFIX,chat.openai.com,Final Exit
+- DOMAIN-SUFFIX,chatgpt.livekit.cloud,Final Exit
+- DOMAIN-SUFFIX,statsigapi.net,Final Exit
+- GEOIP,CN,DIRECT
+- MATCH,Final Exit
