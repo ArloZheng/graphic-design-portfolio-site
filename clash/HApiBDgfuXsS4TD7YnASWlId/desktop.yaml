@@ -734,7 +734,7 @@ proxies:
   sni: us6.dexlos.com
   obfs: salamander
   obfs-password: xK9mN2pLq5vR8wB3
-- name: Oregon Residential
+- name: Oregon 205.214.55.251
   type: socks5
   server: 205.214.55.251
   port: 443
@@ -742,7 +742,7 @@ proxies:
   password: ChzwfDZ4UC
   udp: false
   dialer-proxy: Front Node - Airport Front
-- name: Temp Residential 47.215.192.185
+- name: Flagstaff AZ 47.215.192.185
   type: socks5
   server: gate-sg.ipfoxy.io
   port: 58688
@@ -750,10 +750,18 @@ proxies:
   password: Vowd7BsAE0M71c6
   udp: false
   dialer-proxy: Front Node - Airport Front
+- name: Nettleton MS 45.62.175.121
+  type: socks5
+  server: 45.62.175.121
+  port: 12323
+  username: 14a732fc202eb
+  password: f761f984da
+  udp: false
+  dialer-proxy: Front Node - Airport Front
 proxy-groups:
 - name: Airport Front
   type: select
-  proxies: &airport_front_nodes
+  proxies: &id001
   - HK-1
   - HK-2
   - HK-3
@@ -808,7 +816,7 @@ proxy-groups:
   - US6-HY2
 - name: Front Node - Airport Front
   type: select
-  proxies: *airport_front_nodes
+  proxies: *id001
 - name: US Transit
   type: select
   proxies:
@@ -821,8 +829,9 @@ proxy-groups:
 - name: Final Exit
   type: select
   proxies:
-  - Oregon Residential
-  - Temp Residential 47.215.192.185
+  - Nettleton MS 45.62.175.121
+  - Oregon 205.214.55.251
+  - Flagstaff AZ 47.215.192.185
 rules:
 - DOMAIN,stun.l.google.com,US Transit
 - DOMAIN,stun1.l.google.com,US Transit
