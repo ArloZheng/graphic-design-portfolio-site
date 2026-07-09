@@ -818,6 +818,18 @@ proxy-groups:
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
+- DOMAIN-SUFFIX,chatgpt.com,Final Exit
+- DOMAIN-SUFFIX,openai.com,Final Exit
+- DOMAIN-SUFFIX,auth.openai.com,Final Exit
+- DOMAIN-SUFFIX,api.openai.com,Final Exit
+- DOMAIN-SUFFIX,oaistatic.com,Final Exit
+- DOMAIN-SUFFIX,oaiusercontent.com,Final Exit
+- DOMAIN-SUFFIX,chat.openai.com,Final Exit
+- DOMAIN-SUFFIX,chatgpt.livekit.cloud,Final Exit
+- DOMAIN-SUFFIX,statsigapi.net,Final Exit
+- DOMAIN-SUFFIX,intercom.io,Final Exit
+- DOMAIN-SUFFIX,intercomcdn.com,Final Exit
+- DOMAIN-SUFFIX,sentry.io,Final Exit
 - DOMAIN,stun.l.google.com,US Transit
 - DOMAIN,stun1.l.google.com,US Transit
 - DOMAIN,stun2.l.google.com,US Transit
@@ -828,6 +840,10 @@ rules:
 - DST-PORT,3478,US Transit
 - DST-PORT,5349,US Transit
 - DST-PORT,19302,US Transit
+- IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+- IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+- IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+- IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
 - GEOIP,CN,DIRECT,no-resolve
 - NETWORK,UDP,US Transit
 - GEOIP,CN,DIRECT
