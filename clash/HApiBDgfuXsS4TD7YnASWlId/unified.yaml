@@ -759,6 +759,8 @@ proxies:
 proxy-groups:
 - name: Airport Front
   type: select
+  url: http://captive.apple.com/hotspot-detect.html
+  interval: 300
   proxies:
   - HK-1
   - HK-2
@@ -814,6 +816,8 @@ proxy-groups:
   - US6-HY2
 - name: US Transit
   type: select
+  url: http://captive.apple.com/hotspot-detect.html
+  interval: 300
   proxies:
   - US-1TCP
   - US1-HY2
@@ -823,6 +827,8 @@ proxy-groups:
   - US2-HY2
 - name: Final Exit
   type: select
+  url: http://captive.apple.com/hotspot-detect.html
+  interval: 300
   proxies:
   - 密西西比州内特尔顿 45.62.175.121
   - 俄勒冈州 205.214.55.251
