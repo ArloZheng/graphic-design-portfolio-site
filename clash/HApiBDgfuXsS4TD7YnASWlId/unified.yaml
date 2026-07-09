@@ -758,7 +758,7 @@ proxies:
   ip-version: ipv4
 proxy-groups:
 - name: Airport Front
-  type: url-test
+  type: select
   proxies:
   - HK-1
   - HK-2
@@ -812,11 +812,8 @@ proxy-groups:
   - US4-HY2
   - US5-HY2
   - US6-HY2
-  url: https://www.gstatic.com/generate_204
-  interval: 300
-  tolerance: 80
 - name: US Transit
-  type: fallback
+  type: select
   proxies:
   - US-1TCP
   - US1-HY2
@@ -824,8 +821,6 @@ proxy-groups:
   - US3-HY2
   - US5-HY2
   - US6-HY2
-  url: https://www.gstatic.com/generate_204
-  interval: 300
 - name: Final Exit
   type: select
   proxies:
