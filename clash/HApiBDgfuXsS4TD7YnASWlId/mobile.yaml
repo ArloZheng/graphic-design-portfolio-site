@@ -36,7 +36,7 @@ dns:
   - 119.29.29.29
   direct-nameserver-follow-policy: true
 proxies:
-- name: Oregon 205.214.55.251
+- name: 俄勒冈州 205.214.55.251
   type: socks5
   server: 205.214.55.251
   port: 443
@@ -44,7 +44,7 @@ proxies:
   password: ChzwfDZ4UC
   udp: false
   dialer-proxy: Airport Front
-- name: Flagstaff AZ 47.215.192.185
+- name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
   server: gate-sg.ipfoxy.io
   port: 58688
@@ -52,7 +52,7 @@ proxies:
   password: Vowd7BsAE0M71c6
   udp: false
   dialer-proxy: Airport Front
-- name: Nettleton MS 45.62.175.121
+- name: 密西西比州内特尔顿 45.62.175.121
   type: socks5
   server: 45.62.175.121
   port: 12323
@@ -73,9 +73,9 @@ proxy-groups:
 - name: Final Exit
   type: select
   proxies:
-  - Nettleton MS 45.62.175.121
-  - Oregon 205.214.55.251
-  - Flagstaff AZ 47.215.192.185
+  - 密西西比州内特尔顿 45.62.175.121
+  - 俄勒冈州 205.214.55.251
+  - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
 - AND,((DOMAIN-SUFFIX,chatgpt.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT

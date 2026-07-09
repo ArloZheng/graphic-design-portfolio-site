@@ -734,7 +734,7 @@ proxies:
   sni: us6.dexlos.com
   obfs: salamander
   obfs-password: xK9mN2pLq5vR8wB3
-- name: Oregon 205.214.55.251
+- name: 俄勒冈州 205.214.55.251
   type: socks5
   server: 205.214.55.251
   port: 443
@@ -742,7 +742,7 @@ proxies:
   password: ChzwfDZ4UC
   udp: false
   dialer-proxy: Front Node - Airport Front
-- name: Flagstaff AZ 47.215.192.185
+- name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
   server: gate-sg.ipfoxy.io
   port: 58688
@@ -750,7 +750,7 @@ proxies:
   password: Vowd7BsAE0M71c6
   udp: false
   dialer-proxy: Front Node - Airport Front
-- name: Nettleton MS 45.62.175.121
+- name: 密西西比州内特尔顿 45.62.175.121
   type: socks5
   server: 45.62.175.121
   port: 12323
@@ -761,7 +761,7 @@ proxies:
 proxy-groups:
 - name: Airport Front
   type: select
-  proxies: &id001
+  proxies:
   - HK-1
   - HK-2
   - HK-3
@@ -816,7 +816,59 @@ proxy-groups:
   - US6-HY2
 - name: Front Node - Airport Front
   type: select
-  proxies: *id001
+  proxies:
+  - HK-1
+  - HK-2
+  - HK-3
+  - HK-4
+  - HK-5
+  - HK-6
+  - HK2-HY2
+  - HK3-HY2
+  - HK4-HY2
+  - HK5-HY2
+  - JP-1
+  - JP-2
+  - JP-3
+  - JP-4
+  - JP-5
+  - JP-6
+  - JP6-HY2
+  - JP7-HY2
+  - JP8-HY2
+  - JP9-HY2
+  - JP10-HY2
+  - KR-1
+  - KR-2
+  - KR-3
+  - KR-4
+  - KR-5
+  - SG-1
+  - SG-2
+  - SG-3
+  - SG1-HY2
+  - SG2-HY2
+  - TW-1
+  - TW-2
+  - TW-3
+  - TW-4
+  - TW-5
+  - TW-6
+  - TW-7
+  - TW-8
+  - TW-9
+  - TW-10
+  - US-1TCP
+  - US-2TCP
+  - US-3TCP
+  - US-4TCP
+  - US-5TCP
+  - US1-HY2
+  - US2-HY2
+  - US3-HY2
+  - US4-HY2
+  - US5-HY2
+  - US6-HY2
 - name: US Transit
   type: select
   proxies:
@@ -829,9 +881,9 @@ proxy-groups:
 - name: Final Exit
   type: select
   proxies:
-  - Nettleton MS 45.62.175.121
-  - Oregon 205.214.55.251
-  - Flagstaff AZ 47.215.192.185
+  - 密西西比州内特尔顿 45.62.175.121
+  - 俄勒冈州 205.214.55.251
+  - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
 - DOMAIN,stun.l.google.com,US Transit
 - DOMAIN,stun1.l.google.com,US Transit
