@@ -3,38 +3,16 @@ allow-lan: false
 mode: rule
 log-level: info
 ipv6: false
-tcp-concurrent: true
-keep-alive-interval: 15
-unified-delay: true
-find-process-mode: always
-profile:
-  store-selected: true
-  store-fake-ip: true
 dns:
   enable: true
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  use-hosts: true
-  use-system-hosts: false
-  respect-rules: true
-  cache-algorithm: arc
   default-nameserver:
   - 223.5.5.5
   - 119.29.29.29
   nameserver:
   - https://1.1.1.1/dns-query
-  proxy-server-nameserver:
-  - 223.5.5.5
-  - 119.29.29.29
-  nameserver-policy:
-    geosite:cn:
-    - 223.5.5.5
-    - 119.29.29.29
-  direct-nameserver:
-  - 223.5.5.5
-  - 119.29.29.29
-  direct-nameserver-follow-policy: true
 proxies:
 - name: HK-1
   type: vless
@@ -840,15 +818,6 @@ proxy-groups:
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
-- AND,((DOMAIN-SUFFIX,chatgpt.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,auth.openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,api.openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,oaistatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,oaiusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,chat.openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,chatgpt.livekit.cloud),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,statsigapi.net),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
 - DOMAIN-SUFFIX,openai.com,Final Exit
 - DOMAIN-SUFFIX,auth.openai.com,Final Exit
@@ -871,16 +840,11 @@ rules:
 - DST-PORT,3478,US Transit
 - DST-PORT,5349,US Transit
 - DST-PORT,19302,US Transit
-- AND,((DOMAIN-SUFFIX,google.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US Transit
 - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
 - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
 - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
 - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
-- GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
 - NETWORK,UDP,US Transit
+- GEOIP,CN,DIRECT
 - MATCH,Final Exit

@@ -3,28 +3,16 @@ allow-lan: false
 mode: rule
 log-level: info
 ipv6: false
-tcp-concurrent: true
-keep-alive-interval: 15
-unified-delay: true
-find-process-mode: always
-profile:
-  store-selected: true
-  store-fake-ip: true
 dns:
   enable: true
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  use-hosts: true
-  use-system-hosts: false
-  respect-rules: true
-  cache-algorithm: arc
   default-nameserver:
   - 223.5.5.5
+  - 119.29.29.29
   nameserver:
   - https://1.1.1.1/dns-query
-  proxy-server-nameserver:
-  - 223.5.5.5
 proxies:
 - name: HK-1
   type: vless
@@ -840,12 +828,7 @@ rules:
 - DST-PORT,3478,US Transit
 - DST-PORT,5349,US Transit
 - DST-PORT,19302,US Transit
-- AND,((DOMAIN-SUFFIX,google.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
-- AND,((PROCESS-NAME-REGEX,(?i)(chrome\.exe|msedge\.exe|firefox\.exe|brave\.exe|opera\.exe|vivaldi\.exe|arc\.exe)),(NETWORK,UDP)),US Transit
-- GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
 - NETWORK,UDP,US Transit
+- GEOIP,CN,DIRECT
 - MATCH,Final Exit
