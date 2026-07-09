@@ -729,7 +729,6 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: Airport Front
 - name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
   server: gate-sg.ipfoxy.io
@@ -737,7 +736,6 @@ proxies:
   username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
   password: Vowd7BsAE0M71c6
   udp: false
-  dialer-proxy: Airport Front
 - name: 密西西比州内特尔顿 45.62.175.121
   type: socks5
   server: 45.62.175.121
@@ -745,7 +743,6 @@ proxies:
   username: 14a732fc202eb
   password: f761f984da
   udp: true
-  dialer-proxy: Airport Front
 proxy-groups:
 - name: Airport Front
   type: select
@@ -814,9 +811,9 @@ proxy-groups:
 - name: Final Exit
   type: select
   proxies:
-  - 密西西比州内特尔顿 45.62.175.121
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  - 密西西比州内特尔顿 45.62.175.121
 rules:
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
 - DOMAIN-SUFFIX,openai.com,Final Exit
