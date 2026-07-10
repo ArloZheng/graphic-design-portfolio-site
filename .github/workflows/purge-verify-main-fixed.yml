@@ -57,3 +57,5 @@ jobs:
           git add clash/HApiBDgfuXsS4TD7YnASWlId/main-fixed-cdn-verify.txt
           git diff --cached --quiet || git commit -m "Record stable main config CDN verification"
           git push
+
+# retry-mobile-fixed-url-purge
