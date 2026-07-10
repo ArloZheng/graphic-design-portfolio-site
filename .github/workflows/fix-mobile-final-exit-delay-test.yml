@@ -1,0 +1,56 @@
+name: Fix mobile Final Exit delay test
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-mobile-final-exit-delay-test.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - name: Tune Final Exit delay test on mobile
+        shell: python
+        run: |
+          from pathlib import Path
+          import yaml
+
+          path=Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          d=yaml.safe_load(path.read_text(encoding='utf-8-sig'))
+
+          for g in d.get('proxy-groups',[]):
+              if isinstance(g,dict) and g.get('name')=='Final Exit':
+                  g['url']='https://www.gstatic.com/generate_204'
+                  g['timeout']=5000
+                  g['expected-status']=204
+                  g.pop('interval',None)
+
+          path.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=100000),encoding='utf-8')
+
+      - name: Validate
+        run: |
+          python - <<'PY'
+          import yaml
+          p='clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          d=yaml.safe_load(open(p,encoding='utf-8'))
+          g=next(g for g in d['proxy-groups'] if g['name']=='Final Exit')
+          assert g['url']=='https://www.gstatic.com/generate_204'
+          assert g['timeout']==5000
+          assert g['expected-status']==204
+          assert 'interval' not in g
+          assert all(g.get('name')!='住宅前置自动选择' for g in d['proxy-groups'])
+          print('mobile Final Exit delay test validation passed')
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Fix mobile Final Exit delay testing"
+          git push
