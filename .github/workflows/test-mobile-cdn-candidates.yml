@@ -1,0 +1,53 @@
+name: Test mobile CDN candidates
+
+on:
+  push:
+    paths:
+      - '.github/workflows/test-mobile-cdn-candidates.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - name: Test candidate fixed URLs
+        shell: python
+        run: |
+          import subprocess, yaml
+          from pathlib import Path
+
+          path='clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          urls={
+            'cdn_jsdelivr':f'https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/{path}',
+            'fastly_jsdelivr':f'https://fastly.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/{path}',
+            'gcore_jsdelivr':f'https://gcore.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/{path}',
+            'testingcf_jsdelivr':f'https://testingcf.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/{path}',
+            'statically':f'https://cdn.statically.io/gh/ArloZheng/graphic-design-portfolio-site/main/{path}',
+          }
+          lines=[]
+          for name,url in urls.items():
+            out=f'/tmp/{name}.yaml'
+            cp=subprocess.run(['curl','-fsSL','--max-time','30','--retry','2',url,'-o',out],capture_output=True,text=True)
+            if cp.returncode!=0:
+              lines.append(f'{name}: fetch_error')
+              continue
+            try:
+              d=yaml.safe_load(Path(out).read_text(encoding='utf-8-sig'))
+              final=next(g for g in d['proxy-groups'] if g.get('name')=='Final Exit')
+              names=final.get('proxies',[])
+              lines.append(f"{name}: count={len(names)} names={' | '.join(names)}")
+            except Exception as e:
+              lines.append(f'{name}: parse_error={type(e).__name__}')
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-candidates.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          print('\n'.join(lines))
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-candidates.txt
+          git diff --cached --quiet || git commit -m "Record mobile CDN candidate results"
+          git push
