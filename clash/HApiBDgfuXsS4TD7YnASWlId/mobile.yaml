@@ -739,8 +739,8 @@ proxies:
   obfs-password: xK9mN2pLq5vR8wB3
 - name: 俄勒冈州 205.214.55.251
   type: socks5
-  server: 127.0.0.1
-  port: 17802
+  server: 205.214.55.251
+  port: 443
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
@@ -748,8 +748,8 @@ proxies:
   ip-version: ipv4
 - name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
-  server: 127.0.0.1
-  port: 17803
+  server: gate-sg.ipfoxy.io
+  port: 58688
   username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
   password: Vowd7BsAE0M71c6
   udp: false
@@ -757,27 +757,13 @@ proxies:
   ip-version: ipv4
 - name: 纽约州纽约市 168.158.76.54
   type: socks5
-  server: 127.0.0.1
-  port: 17801
+  server: 168.158.76.54
+  port: 12324
   username: 14a2e3e39efd7
   password: bcab84b4d5
   udp: false
   dialer-proxy: US-1TCP
   ip-version: ipv4
-tunnels:
-- network: [tcp]
-  address: 127.0.0.1:17801
-  target: 168.158.76.54:12324
-  proxy: Airport Front
-- network: [tcp]
-  address: 127.0.0.1:17802
-  target: 205.214.55.251:443
-  proxy: Airport Front
-- network: [tcp]
-  address: 127.0.0.1:17803
-  target: gate-sg.ipfoxy.io:58688
-  proxy: Airport Front
-
 proxy-groups:
 - name: Airport Front
   type: select
@@ -825,8 +811,8 @@ proxy-groups:
   url: http://captive.apple.com/hotspot-detect.html
   interval: 300
   proxies:
-  - 纽约州纽约市 168.158.76.54
   - 俄勒冈州 205.214.55.251
+  - 纽约州纽约市 168.158.76.54
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
 - DOMAIN,raw.githubusercontent.com,DIRECT
