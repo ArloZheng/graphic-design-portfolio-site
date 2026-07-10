@@ -1,0 +1,57 @@
+name: Verify alternative fixed mobile URLs
+
+on:
+  push:
+    paths:
+      - '.github/workflows/verify-mobile-alternative-fixed-urls.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - name: Fetch alternative fixed URLs
+        run: |
+          set +e
+          curl -fsSL --retry 5 --retry-delay 3 'https://raw.githubusercontent.com/ArloZheng/graphic-design-portfolio-site/main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' -o /tmp/raw.yaml
+          RAW_RC=$?
+          curl -fsSL --retry 5 --retry-delay 3 'https://cdn.statically.io/gh/ArloZheng/graphic-design-portfolio-site/main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' -o /tmp/statically.yaml
+          STATICALLY_RC=$?
+          echo $RAW_RC > /tmp/raw.rc
+          echo $STATICALLY_RC > /tmp/statically.rc
+      - name: Validate alternatives
+        shell: python
+        run: |
+          import yaml
+          from pathlib import Path
+          expected=[
+            'Oregon Residential',
+            '亚利桑那州弗拉格斯塔夫 47.215.192.185',
+            '纽约州纽约市 168.158.76.54',
+            'Residential 198.65.47.221',
+          ]
+          out=[]
+          for label,path,rcpath in [
+              ('RAW','/tmp/raw.yaml','/tmp/raw.rc'),
+              ('STATICALLY','/tmp/statically.yaml','/tmp/statically.rc'),
+          ]:
+              rc=Path(rcpath).read_text().strip()
+              if rc!='0' or not Path(path).exists():
+                  out.append(f'{label}_FETCH_OK=false\n{label}_VERIFIED=false')
+                  continue
+              d=yaml.safe_load(Path(path).read_text(encoding='utf-8-sig'))
+              final=next(g for g in d['proxy-groups'] if g.get('name')=='Final Exit')
+              members=final.get('proxies',[])
+              out.append(f'{label}_FETCH_OK=true\n{label}_VERIFIED={str(members==expected).lower()}\n'+''.join('- '+x+'\n' for x in members))
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-alternative-fixed-url-verify.txt').write_text('\n\n'.join(out),encoding='utf-8')
+      - name: Commit result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-alternative-fixed-url-verify.txt
+          git diff --cached --quiet || git commit -m "Record alternative fixed mobile URL verification"
+          git push
