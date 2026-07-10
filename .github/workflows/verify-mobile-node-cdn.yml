@@ -20,24 +20,31 @@ jobs:
             'https://purge.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
             -o /tmp/purge.json
           cat /tmp/purge.json
-      - name: Fetch exact mobile CDN URL and record new node presence
+      - name: Poll exact mobile CDN URL for the new node
+        shell: python
         run: |
-          sleep 20
-          curl -fsSL --retry 5 --retry-delay 3 \
-            'https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
-            -o /tmp/mobile.yaml
-          python - <<'PY'
-          import yaml
+          import subprocess,time,yaml
           from pathlib import Path
-          d=yaml.safe_load(open('/tmp/mobile.yaml',encoding='utf-8-sig'))
+          url='https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
           name='Residential 198.65.47.221'
-          node=next((x for x in d.get('proxies',[]) if x.get('name')==name),None)
-          g=next(x for x in d['proxy-groups'] if x.get('name')=='Final Exit')
-          present=(node is not None and node.get('server')=='198.65.47.221' and node.get('port')==7471 and name in g.get('proxies',[]))
-          text='verified='+str(present).lower()+'\nname='+name+'\nfinal_exit_member='+str(name in g.get('proxies',[])).lower()+'\n'
+          present=False
+          final_member=False
+          attempts=0
+          for i in range(12):
+            attempts=i+1
+            subprocess.run(['curl','-fsSL','--retry','3','--retry-delay','2',url,'-o','/tmp/mobile.yaml'],check=True)
+            d=yaml.safe_load(Path('/tmp/mobile.yaml').read_text(encoding='utf-8-sig'))
+            node=next((x for x in d.get('proxies',[]) if x.get('name')==name),None)
+            g=next(x for x in d['proxy-groups'] if x.get('name')=='Final Exit')
+            final_member=name in g.get('proxies',[])
+            present=(node is not None and node.get('server')=='198.65.47.221' and node.get('port')==7471 and final_member)
+            print(f'attempt={attempts} verified={present} final_member={final_member}')
+            if present:
+              break
+            time.sleep(20)
+          text=('verified='+str(present).lower()+'\nname='+name+'\nfinal_exit_member='+str(final_member).lower()+'\nattempts='+str(attempts)+'\n')
           Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-node-cdn-observed.txt').write_text(text,encoding='utf-8')
           print(text)
-          PY
       - name: Commit observed CDN result
         run: |
           git config user.name "github-actions[bot]"
