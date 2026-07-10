@@ -58,4 +58,4 @@ jobs:
           git diff --cached --quiet || git commit -m "Record stable main config CDN verification"
           git push
 
-# retry-mobile-fixed-url-purge
+# retry-mobile-fixed-url-purge-after-window
