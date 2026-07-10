@@ -1,7 +1,0 @@
-cdn_fetch_ok=true
-source=desktop.yaml
-profile=mobile-desktop.yaml
-final_exit_count=3
-final_exit_names=纽约州纽约市 168.158.76.54 | 俄勒冈州 205.214.55.251 | 亚利桑那州弗拉格斯塔夫 47.215.192.185
-provider_type=http
-rules_last=MATCH,Final Exit

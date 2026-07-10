@@ -1,5 +1,0 @@
-date: Fri, 10 Jul 2026 15:58:14 GMT
-cache-control: public, max-age=604800, s-maxage=43200
-etag: W/"4ea5-j9UOsok8GIOkn2a7IphAdsDHGB0"
-age: 2291
-server: cloudflare

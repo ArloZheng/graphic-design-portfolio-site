@@ -1,5 +1,0 @@
-cdn_jsdelivr: count=1 names=Oregon Residential
-fastly_jsdelivr: count=1 names=Oregon Residential
-gcore_jsdelivr: count=1 names=Oregon Residential
-testingcf_jsdelivr: count=1 names=Oregon Residential
-statically: count=3 names=Oregon Residential | Arizona Residential | New York Residential
