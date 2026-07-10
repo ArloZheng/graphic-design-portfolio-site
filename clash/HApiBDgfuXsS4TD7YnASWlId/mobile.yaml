@@ -838,12 +838,13 @@ proxy-groups:
   - US2-HY2
 - name: Final Exit
   type: select
-  url: http://captive.apple.com/hotspot-detect.html
-  interval: 300
+  url: https://www.gstatic.com/generate_204
   proxies:
   - 纽约州纽约市 168.158.76.54
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  timeout: 5000
+  expected-status: 204
 rules:
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
 - DOMAIN-SUFFIX,openai.com,Final Exit
