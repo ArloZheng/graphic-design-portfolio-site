@@ -13,19 +13,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - run: python -m pip install --quiet pyyaml
       - name: Convert desktop airport nodes to live provider
         shell: python
         run: |
           from pathlib import Path
-          import yaml
+          import subprocess, yaml
 
           root=Path('clash/HApiBDgfuXsS4TD7YnASWlId')
           desktop=root/'desktop.yaml'
-          mobile=root/'mobile.yaml'
           d=yaml.safe_load(desktop.read_text(encoding='utf-8-sig'))
-          m=yaml.safe_load(mobile.read_text(encoding='utf-8-sig'))
-          provider_url=m['proxy-providers']['airport']['url']
+
+          historical=subprocess.check_output([
+            'git','show','a0da697716f392491d7682fcd0a1302b88b2b41e:clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          ], text=True)
+          h=yaml.safe_load(historical)
+          provider_url=h['proxy-providers']['airport']['url']
 
           residential=[p for p in d.get('proxies',[]) if isinstance(p,dict) and p.get('type')=='socks5']
           for p in residential:
