@@ -73,3 +73,5 @@ jobs:
           git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-verify.txt .github/workflows/purge-verify-mobile-cdn.yml
           git commit -m "Verify mobile CDN Final Exit after purge"
           git push origin HEAD:main
+
+# trigger: purge-and-verify-mobile-cdn
