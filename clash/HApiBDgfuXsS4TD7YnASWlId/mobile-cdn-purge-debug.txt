@@ -1,0 +1,48 @@
+PURGE_FILE_MAIN
+{
+  "id": "DAJv60B7O9kOvsX6",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:26:34.540Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml": {
+      "throttled": true,
+      "throttlingReset": 2951
+    }
+  }
+}\nHTTP_STATUS:200
+
+
+PURGE_FILE_LATEST
+{
+  "id": "xnmkvStCdxdOE6jN",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:26:35.162Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
+
+PURGE_REPO_MAIN
+{
+  "id": "I3M38TdnLa6dHOHz",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:26:35.809Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
+
+FINAL_EXIT_MEMBERS
+- Oregon Residential
