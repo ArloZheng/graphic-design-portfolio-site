@@ -1,0 +1,50 @@
+name: Purge and verify mobile CDN
+
+on:
+  push:
+    paths:
+      - '.github/workflows/purge-and-verify-mobile-cdn.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - name: Purge jsDelivr cache
+        run: |
+          curl -fsSL --retry 5 --retry-delay 2 \
+            'https://purge.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
+            -o /tmp/purge.json
+          cat /tmp/purge.json
+      - name: Wait for cache propagation
+        run: sleep 20
+      - name: Fetch exact fixed mobile CDN URL and verify Final Exit
+        run: |
+          curl -fsSL --retry 5 --retry-delay 3 \
+            'https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
+            -o /tmp/mobile-cdn.yaml
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          d=yaml.safe_load(Path('/tmp/mobile-cdn.yaml').read_text(encoding='utf-8-sig'))
+          g=next(x for x in d['proxy-groups'] if x.get('name')=='Final Exit')
+          names=g.get('proxies',[])
+          exits={x['name']:x for x in d.get('proxies',[]) if x.get('type')=='socks5'}
+          assert len(names)==3, names
+          assert all(n in exits for n in names), (names, list(exits))
+          assert all(exits[n].get('dialer-proxy')=='Airport Front' for n in names)
+          status='final_exit_count=3\nfinal_exit_names='+' | '.join(names)+'\ncdn_url_verified=true\n'
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-status.txt').write_text(status,encoding='utf-8')
+          print(status)
+          PY
+      - name: Commit verification status
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-status.txt
+          git diff --cached --quiet || git commit -m "Verify mobile CDN Final Exit options"
+          git push
