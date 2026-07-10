@@ -1,0 +1,111 @@
+name: Publish mobile config from stable desktop
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-mobile-from-desktop.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+
+      - name: Copy stable desktop config to dedicated mobile file
+        run: |
+          cp clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml \
+             clash/HApiBDgfuXsS4TD7YnASWlId/mobile-stable.yaml
+          cmp -s \
+            clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml \
+            clash/HApiBDgfuXsS4TD7YnASWlId/mobile-stable.yaml
+
+      - name: Validate Mihomo structure and chain references
+        run: |
+          python - <<'PY'
+          import yaml
+          p='clash/HApiBDgfuXsS4TD7YnASWlId/mobile-stable.yaml'
+          d=yaml.safe_load(open(p,encoding='utf-8-sig'))
+
+          assert isinstance(d,dict)
+          assert isinstance(d.get('proxies'),list)
+          assert isinstance(d.get('proxy-groups'),list)
+          assert isinstance(d.get('rules'),list)
+          assert isinstance(d.get('proxy-providers'),dict)
+
+          groups={g['name']:g for g in d['proxy-groups']}
+          assert groups['Airport Front']['type']=='select'
+          assert groups['Airport Front']['use']==['airport']
+          assert groups['US Transit']['type']=='select'
+          assert groups['US Transit']['use']==['airport']
+          assert groups['Final Exit']['type']=='select'
+
+          provider=d['proxy-providers']['airport']
+          assert provider['type']=='http'
+          assert provider.get('url')
+          assert provider.get('path')
+          assert provider.get('interval')
+
+          exits=[x for x in d['proxies'] if x.get('type')=='socks5']
+          exit_names=[x['name'] for x in exits]
+          assert len(exits)==3, exit_names
+          assert all(x.get('dialer-proxy')=='Airport Front' for x in exits)
+          assert set(groups['Final Exit']['proxies'])==set(exit_names)
+          assert d['rules'][-1]=='MATCH,Final Exit'
+
+          print('YAML parsed successfully')
+          print('Airport Front provider reference valid')
+          print('Residential dialer chain references valid')
+          print('Final Exit count:', len(groups['Final Exit']['proxies']))
+          print('Final Exit names:', ' | '.join(groups['Final Exit']['proxies']))
+          PY
+
+      - name: Commit dedicated mobile config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-stable.yaml
+          git diff --cached --quiet || git commit -m "Publish stable mobile config from desktop baseline"
+          git push
+
+      - name: Fetch and verify mobile CDN candidates
+        run: |
+          sleep 20
+          python - <<'PY'
+          import subprocess, yaml
+          from pathlib import Path
+
+          path='clash/HApiBDgfuXsS4TD7YnASWlId/mobile-stable.yaml'
+          urls={
+            'statically':f'https://cdn.statically.io/gh/ArloZheng/graphic-design-portfolio-site/main/{path}',
+            'jsdelivr':f'https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/{path}',
+          }
+          lines=[]
+          for name,url in urls.items():
+            out=f'/tmp/{name}.yaml'
+            cp=subprocess.run(['curl','-fsSL','--max-time','45','--retry','4','--retry-delay','3',url,'-o',out],capture_output=True,text=True)
+            if cp.returncode!=0:
+              lines.append(f'{name}: fetch_error')
+              continue
+            try:
+              d=yaml.safe_load(Path(out).read_text(encoding='utf-8-sig'))
+              groups={g['name']:g for g in d['proxy-groups']}
+              final=groups['Final Exit']['proxies']
+              exits={x['name']:x for x in d['proxies'] if x.get('type')=='socks5'}
+              ok=(len(final)==3 and all(n in exits for n in final) and all(exits[n].get('dialer-proxy')=='Airport Front' for n in final))
+              lines.append(f"{name}: ok={str(ok).lower()} count={len(final)} names={' | '.join(final)}")
+            except Exception as e:
+              lines.append(f'{name}: parse_error={type(e).__name__}')
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-stable-cdn-status.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          print('\n'.join(lines))
+          PY
+
+      - name: Commit CDN verification status
+        run: |
+          git pull --rebase
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-stable-cdn-status.txt
+          git diff --cached --quiet || git commit -m "Verify stable mobile CDN endpoints"
+          git push
