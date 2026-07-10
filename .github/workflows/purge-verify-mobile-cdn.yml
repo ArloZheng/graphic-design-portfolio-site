@@ -1,0 +1,75 @@
+name: Purge and verify mobile CDN
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/purge-verify-mobile-cdn.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  purge-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Purge jsDelivr cache and verify Final Exit
+        shell: python
+        run: |
+          import time
+          import requests
+          from pathlib import Path
+
+          cdn = 'https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          purge = 'https://purge.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          expected = [
+              '亚利桑那州弗拉格斯塔夫 47.215.192.185',
+              '纽约州纽约市 168.158.76.54',
+              'Residential 198.65.47.221',
+          ]
+
+          purge_resp = requests.get(purge, timeout=30)
+          purge_text = purge_resp.text[:2000]
+
+          verified = False
+          observed = ''
+          status = None
+          for _ in range(12):
+              r = requests.get(cdn, timeout=30, headers={'Cache-Control': 'no-cache'})
+              status = r.status_code
+              text = r.text
+              start = text.find('- name: Final Exit')
+              if start >= 0:
+                  end = text.find('\nrules:', start)
+                  observed = text[start:end if end >= 0 else start + 1200]
+              if all(name in observed for name in expected) and '  - Oregon Residential' not in observed:
+                  verified = True
+                  break
+              time.sleep(10)
+
+          report = (
+              f'purge_status={purge_resp.status_code}\n'
+              f'cdn_status={status}\n'
+              f'verified={verified}\n\n'
+              'PURGE_RESPONSE\n'
+              f'{purge_text}\n\n'
+              'FINAL_EXIT_SECTION\n'
+              f'{observed}\n'
+          )
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-verify.txt').write_text(report, encoding='utf-8')
+          if not verified:
+              raise SystemExit(report)
+
+      - name: Commit verification report and remove one-shot workflow
+        run: |
+          rm .github/workflows/purge-verify-mobile-cdn.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-verify.txt .github/workflows/purge-verify-mobile-cdn.yml
+          git commit -m "Verify mobile CDN Final Exit after purge"
+          git push origin HEAD:main
