@@ -1,0 +1,55 @@
+MOBILE_VERIFIED=false
+- Oregon Residential
+
+
+DESKTOP_VERIFIED=true
+- 纽约州纽约市 168.158.76.54
+- 俄勒冈州 205.214.55.251
+- 亚利桑那州弗拉格斯塔夫 47.215.192.185
+- Residential 198.65.47.221
+
+
+PURGE_MOBILE
+{
+  "id": "BkiXrM4kklDpRBs9",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:40:58.974Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml": {
+      "throttled": true,
+      "throttlingReset": 2086
+    }
+  }
+}
+
+PURGE_DESKTOP
+{
+  "id": "hsdop5VzgXnRtYMr",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:40:59.359Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
+
+PURGE_DIR
+{
+  "id": "vCGEuHNdhiCFHJmY",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:40:59.964Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
