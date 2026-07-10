@@ -14,12 +14,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python -m pip install --quiet pyyaml
-      - name: Purge exact mobile CDN URL
+      - name: Purge mobile CDN aliases
         run: |
+          set -e
           curl -fsSL --retry 5 --retry-delay 2 \
             'https://purge.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
-            -o /tmp/purge.json
-          cat /tmp/purge.json
+            -o /tmp/purge-file-main.json
+          curl -fsSL --retry 5 --retry-delay 2 \
+            'https://purge.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
+            -o /tmp/purge-file-latest.json
+          curl -fsSL --retry 5 --retry-delay 2 \
+            'https://purge.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/' \
+            -o /tmp/purge-repo-main.json
+          cat /tmp/purge-file-main.json
+          cat /tmp/purge-file-latest.json
+          cat /tmp/purge-repo-main.json
       - name: Poll exact mobile CDN URL for the new node
         shell: python
         run: |
@@ -30,7 +39,7 @@ jobs:
           present=False
           final_member=False
           attempts=0
-          for i in range(12):
+          for i in range(18):
             attempts=i+1
             subprocess.run(['curl','-fsSL','--retry','3','--retry-delay','2',url,'-o','/tmp/mobile.yaml'],check=True)
             d=yaml.safe_load(Path('/tmp/mobile.yaml').read_text(encoding='utf-8-sig'))
@@ -41,7 +50,7 @@ jobs:
             print(f'attempt={attempts} verified={present} final_member={final_member}')
             if present:
               break
-            time.sleep(20)
+            time.sleep(10)
           text=('verified='+str(present).lower()+'\nname='+name+'\nfinal_exit_member='+str(final_member).lower()+'\nattempts='+str(attempts)+'\n')
           Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-node-cdn-observed.txt').write_text(text,encoding='utf-8')
           print(text)
