@@ -11,22 +11,22 @@ DESKTOP_VERIFIED=true
 
 PURGE_MOBILE
 {
-  "id": "CkK47IxV8lqPD7m1",
+  "id": "2j65nb3vEKO9SHZt",
   "status": "finished",
-  "timestamp": "2026-07-10T17:49:00.030Z",
+  "timestamp": "2026-07-10T17:54:58.967Z",
   "paths": {
     "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml": {
       "throttled": true,
-      "throttlingReset": 1605
+      "throttlingReset": 1246
     }
   }
 }
 
 PURGE_DESKTOP
 {
-  "id": "KtDHJWsEpexTiPTf",
+  "id": "dsJuAk1BhCtsSjMo",
   "status": "finished",
-  "timestamp": "2026-07-10T17:49:00.422Z",
+  "timestamp": "2026-07-10T17:54:59.593Z",
   "paths": {
     "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml": {
       "throttled": false,
@@ -40,9 +40,9 @@ PURGE_DESKTOP
 
 PURGE_DIR
 {
-  "id": "TsqMdXVphvuuwAIf",
+  "id": "7pp86Ih5KLG7jqeX",
   "status": "finished",
-  "timestamp": "2026-07-10T17:49:01.056Z",
+  "timestamp": "2026-07-10T17:55:00.382Z",
   "paths": {
     "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/": {
       "throttled": false,
