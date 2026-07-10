@@ -1,0 +1,34 @@
+PURGE_DIR_MAIN
+{
+  "id": "jSmebEaw8ohWXaCo",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:28:36.147Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
+
+PURGE_DIR_LATEST
+{
+  "id": "al5oFjfgtTrJAgOW",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:28:36.661Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site/clash/HApiBDgfuXsS4TD7YnASWlId/": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
+
+FINAL_EXIT_MEMBERS
+- Oregon Residential
