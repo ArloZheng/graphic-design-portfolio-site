@@ -13,27 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - run: python -m pip install --quiet pyyaml
       - name: Convert desktop airport nodes to live provider
         shell: python
         run: |
           from pathlib import Path
-          import subprocess, yaml
+          import yaml
 
           root=Path('clash/HApiBDgfuXsS4TD7YnASWlId')
           desktop=root/'desktop.yaml'
+          mobile=root/'mobile.yaml'
           d=yaml.safe_load(desktop.read_text(encoding='utf-8-sig'))
-
-          # Reuse the known working upstream airport provider URL from the morning mobile baseline.
-          old_mobile=subprocess.check_output([
-            'git','show','d73b2c45c5ac199a14aeafadd819cac2bbb6fdbb:clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
-          ], text=True)
-          m=yaml.safe_load(old_mobile)
+          m=yaml.safe_load(mobile.read_text(encoding='utf-8-sig'))
           provider_url=m['proxy-providers']['airport']['url']
 
-          # Keep only residential SOCKS5 exits in proxies; airport nodes come from live provider.
           residential=[p for p in d.get('proxies',[]) if isinstance(p,dict) and p.get('type')=='socks5']
           for p in residential:
             p['dialer-proxy']='Airport Front'
