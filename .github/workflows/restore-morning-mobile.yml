@@ -1,0 +1,46 @@
+name: Restore morning mobile config
+
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-morning-mobile.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore morning baseline and change only residential IP
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess,yaml
+          p=Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          raw=subprocess.check_output(['git','show','d73b2c45c5ac199a14aeafadd819cac2bbb6fdbb:clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'],text=True)
+          d=yaml.safe_load(raw)
+          r=next(x for x in d['proxies'] if x.get('name')=='Oregon Residential')
+          r['server']='205.214.55.251'
+          p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=100000),encoding='utf-8')
+      - name: Validate
+        run: |
+          python - <<'PY'
+          import yaml
+          d=yaml.safe_load(open('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml',encoding='utf-8'))
+          r=next(x for x in d['proxies'] if x.get('name')=='Oregon Residential')
+          assert r['server']=='205.214.55.251'
+          assert r['dialer-proxy']=='Airport Front'
+          assert d['rules'][-1]=='MATCH,Final Exit'
+          print('morning baseline restored')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Restore morning mobile baseline"
+          git push
