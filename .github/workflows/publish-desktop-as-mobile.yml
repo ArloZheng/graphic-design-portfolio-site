@@ -1,0 +1,86 @@
+name: Publish desktop config for mobile
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-desktop-as-mobile.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - name: Copy stable desktop config to mobile CDN profile
+        shell: python
+        run: |
+          from pathlib import Path
+          import yaml
+
+          root=Path('clash/HApiBDgfuXsS4TD7YnASWlId')
+          src=root/'desktop.yaml'
+          dst=root/'mobile-desktop.yaml'
+          d=yaml.safe_load(src.read_text(encoding='utf-8-sig'))
+
+          # Keep the stable desktop logic unchanged, only normalize mobile-safe fields.
+          d['allow-lan']=False
+          d['mode']='rule'
+          d['log-level']='info'
+          d['ipv6']=False
+
+          # Validate Mihomo official shape: proxy-groups select can list proxies/use.
+          groups={g['name']:g for g in d.get('proxy-groups',[])}
+          assert 'Airport Front' in groups and 'Final Exit' in groups
+          assert groups['Final Exit']['type']=='select'
+          assert len(groups['Final Exit'].get('proxies',[]))>=3
+          assert 'proxy-providers' in d and d['proxy-providers']['airport']['type']=='http'
+          exits={p['name']:p for p in d.get('proxies',[]) if p.get('type')=='socks5'}
+          assert all(name in exits for name in groups['Final Exit']['proxies'])
+          assert all(exits[name].get('dialer-proxy')=='Airport Front' for name in groups['Final Exit']['proxies'])
+          assert d.get('rules',[])[-1]=='MATCH,Final Exit'
+
+          dst.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=100000),encoding='utf-8')
+
+      - name: Commit mobile desktop copy
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-desktop.yaml
+          git diff --cached --quiet || git commit -m "Publish desktop config as mobile profile"
+          git push
+
+      - name: Verify Statically CDN mobile URL
+        run: |
+          sleep 20
+          curl -fsSL --retry 5 --retry-delay 3 \
+            'https://cdn.statically.io/gh/ArloZheng/graphic-design-portfolio-site/main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile-desktop.yaml' \
+            -o /tmp/mobile-desktop.yaml
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          d=yaml.safe_load(Path('/tmp/mobile-desktop.yaml').read_text(encoding='utf-8-sig'))
+          groups={g['name']:g for g in d['proxy-groups']}
+          final=groups['Final Exit']
+          names=final.get('proxies',[])
+          exits={p['name']:p for p in d['proxies'] if p.get('type')=='socks5'}
+          provider=d['proxy-providers']['airport']
+          assert final['type']=='select'
+          assert len(names)>=3, names
+          assert all(n in exits for n in names)
+          assert all(exits[n].get('dialer-proxy')=='Airport Front' for n in names)
+          assert provider['type']=='http'
+          assert d['rules'][-1]=='MATCH,Final Exit'
+          status='cdn_fetch_ok=true\nsource=desktop.yaml\nprofile=mobile-desktop.yaml\nfinal_exit_count='+str(len(names))+'\nfinal_exit_names='+' | '.join(names)+'\nprovider_type='+provider['type']+'\nrules_last='+d['rules'][-1]+'\n'
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-desktop-cdn-status.txt').write_text(status,encoding='utf-8')
+          print(status)
+          PY
+
+      - name: Commit CDN verification result
+        run: |
+          git pull --rebase
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-desktop-cdn-status.txt
+          git diff --cached --quiet || git commit -m "Verify desktop-based mobile CDN profile"
+          git push
