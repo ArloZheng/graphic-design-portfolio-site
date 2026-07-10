@@ -3,14 +3,6 @@ allow-lan: false
 mode: rule
 log-level: info
 ipv6: false
-tun:
-  enable: true
-  stack: system
-  auto-route: true
-  auto-detect-interface: true
-  strict-route: true
-  dns-hijack:
-  - any:53
 dns:
   enable: true
   ipv6: false

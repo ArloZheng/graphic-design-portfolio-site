@@ -30,8 +30,7 @@ jobs:
 
           assert mobile == unified, 'unified.yaml must remain an exact semantic copy of mobile.yaml'
           assert mobile['mode'] == 'rule'
-          assert mobile['tun']['enable'] is True
-          assert mobile['tun']['strict-route'] is True
+          assert 'tun' not in mobile
           assert 'tunnels' not in mobile
           residential = [proxy for proxy in mobile['proxies'] if proxy.get('type') == 'socks5']
           assert all(proxy.get('dialer-proxy') == 'US-1TCP' for proxy in residential)
