@@ -3,23 +3,28 @@ allow-lan: false
 mode: rule
 log-level: info
 ipv6: false
+tcp-concurrent: true
+keep-alive-interval: 15
+unified-delay: true
+find-process-mode: always
+profile:
+  store-selected: true
+  store-fake-ip: true
 dns:
   enable: true
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  use-hosts: true
+  use-system-hosts: false
+  respect-rules: true
+  cache-algorithm: arc
   default-nameserver:
   - 223.5.5.5
-  - 119.29.29.29
   nameserver:
-  - https://dns.alidns.com/dns-query
-  - https://doh.pub/dns-query
-  - 223.5.5.5
-  - 119.29.29.29
+  - https://1.1.1.1/dns-query
   proxy-server-nameserver:
   - 223.5.5.5
-  - 119.29.29.29
-  - https://dns.alidns.com/dns-query
 proxies:
 - name: HK-1
   type: vless
@@ -729,38 +734,17 @@ proxies:
   sni: us6.dexlos.com
   obfs: salamander
   obfs-password: xK9mN2pLq5vR8wB3
-- name: 俄勒冈州 205.214.55.251
+- name: Oregon Residential
   type: socks5
   server: 205.214.55.251
   port: 443
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: US1-HY2
-  ip-version: ipv4
-- name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
-  type: socks5
-  server: gate-sg.ipfoxy.io
-  port: 58688
-  username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
-  password: Vowd7BsAE0M71c6
-  udp: false
-  dialer-proxy: US1-HY2
-  ip-version: ipv4
-- name: 纽约州纽约市 168.158.76.54
-  type: socks5
-  server: 168.158.76.54
-  port: 12324
-  username: 14a2e3e39efd7
-  password: bcab84b4d5
-  udp: false
-  dialer-proxy: US Transit
-  ip-version: ipv4
+  dialer-proxy: Airport Front
 proxy-groups:
 - name: Airport Front
   type: select
-  url: http://captive.apple.com/hotspot-detect.html
-  interval: 300
   proxies:
   - HK-1
   - HK-2
@@ -768,12 +752,21 @@ proxy-groups:
   - HK-4
   - HK-5
   - HK-6
+  - HK2-HY2
+  - HK3-HY2
+  - HK4-HY2
+  - HK5-HY2
   - JP-1
   - JP-2
   - JP-3
   - JP-4
   - JP-5
   - JP-6
+  - JP6-HY2
+  - JP7-HY2
+  - JP8-HY2
+  - JP9-HY2
+  - JP10-HY2
   - KR-1
   - KR-2
   - KR-3
@@ -782,59 +775,79 @@ proxy-groups:
   - SG-1
   - SG-2
   - SG-3
+  - SG1-HY2
+  - SG2-HY2
+  - TW-1
+  - TW-2
+  - TW-3
+  - TW-4
+  - TW-5
+  - TW-6
+  - TW-7
+  - TW-8
+  - TW-9
+  - TW-10
   - US-1TCP
   - US-2TCP
   - US-3TCP
   - US-4TCP
   - US-5TCP
+  - US1-HY2
+  - US2-HY2
+  - US3-HY2
+  - US4-HY2
+  - US5-HY2
+  - US6-HY2
 - name: US Transit
   type: select
-  url: http://captive.apple.com/hotspot-detect.html
-  interval: 300
   proxies:
   - US-1TCP
   - US1-HY2
+  - US2-HY2
   - US3-HY2
   - US5-HY2
   - US6-HY2
-  - US2-HY2
 - name: Final Exit
   type: select
-  url: http://captive.apple.com/hotspot-detect.html
-  interval: 300
   proxies:
-  - 俄勒冈州 205.214.55.251
-  - 纽约州纽约市 168.158.76.54
-  - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  - Oregon Residential
 rules:
-- DOMAIN,raw.githubusercontent.com,DIRECT
+- AND,((DOMAIN-SUFFIX,chatgpt.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,oaistatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,oaiusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
 - DOMAIN-SUFFIX,openai.com,Final Exit
-- DOMAIN-SUFFIX,auth.openai.com,Final Exit
-- DOMAIN-SUFFIX,api.openai.com,Final Exit
 - DOMAIN-SUFFIX,oaistatic.com,Final Exit
 - DOMAIN-SUFFIX,oaiusercontent.com,Final Exit
-- DOMAIN-SUFFIX,chat.openai.com,Final Exit
-- DOMAIN-SUFFIX,chatgpt.livekit.cloud,Final Exit
-- DOMAIN-SUFFIX,statsigapi.net,Final Exit
-- DOMAIN-SUFFIX,intercom.io,Final Exit
-- DOMAIN-SUFFIX,intercomcdn.com,Final Exit
-- DOMAIN-SUFFIX,sentry.io,Final Exit
-- DOMAIN,stun.l.google.com,Airport Front
-- DOMAIN,stun1.l.google.com,Airport Front
-- DOMAIN,stun2.l.google.com,Airport Front
-- DOMAIN,stun3.l.google.com,Airport Front
-- DOMAIN,stun4.l.google.com,Airport Front
-- DOMAIN,stun.cloudflare.com,Airport Front
-- DOMAIN-SUFFIX,stun.twilio.com,Airport Front
-- DST-PORT,3478,Airport Front
-- DST-PORT,5349,Airport Front
-- DST-PORT,19302,Airport Front
-- IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
-- IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
-- IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
-- IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+- DOMAIN,aistudio.google.com,US Transit
+- DOMAIN,gemini.google.com,US Transit
+- DOMAIN,ai.google.dev,US Transit
+- DOMAIN,generativelanguage.googleapis.com,US Transit
+- DOMAIN,makersuite.google.com,US Transit
+- DOMAIN,alkalimakersuite-pa.clients6.google.com,US Transit
+- DOMAIN,accounts.google.com,US Transit
+- DOMAIN,oauth2.googleapis.com,US Transit
+- DOMAIN,people.googleapis.com,US Transit
+- DOMAIN,identitytoolkit.googleapis.com,US Transit
+- DOMAIN,securetoken.googleapis.com,US Transit
+- DOMAIN,firebaseinstallations.googleapis.com,US Transit
+- DOMAIN,stun.l.google.com,US Transit
+- DOMAIN,stun1.l.google.com,US Transit
+- DOMAIN,stun2.l.google.com,US Transit
+- DOMAIN,stun3.l.google.com,US Transit
+- DOMAIN,stun4.l.google.com,US Transit
+- DOMAIN,stun.cloudflare.com,US Transit
+- DOMAIN-SUFFIX,stun.twilio.com,US Transit
+- DST-PORT,3478,US Transit
+- DST-PORT,5349,US Transit
+- DST-PORT,19302,US Transit
+- AND,((DOMAIN-SUFFIX,google.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,googleapis.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,gstatic.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((DOMAIN-SUFFIX,googleusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
+- AND,((PROCESS-NAME-REGEX,(?i)(com\.android\.chrome|com\.huawei\.browser|com\.microsoft\.emmx|org\.mozilla\.firefox|com\.brave\.browser|com\.opera\..*|com\.kiwibrowser\.browser|com\.vivaldi\.browser|com\.google\.android\.webview|com\.android\.webview|com\.huawei\.webview|com\.openai\.chatgpt|com\.google\.android\.googlequicksearchbox)),(NETWORK,UDP)),US Transit
+- GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
-- NETWORK,UDP,Airport Front
-- GEOIP,CN,DIRECT
+- NETWORK,UDP,US Transit
 - MATCH,Final Exit
