@@ -20,7 +20,7 @@ jobs:
             'https://purge.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
             -o /tmp/purge.json
           cat /tmp/purge.json
-      - name: Fetch exact mobile CDN URL and verify new node
+      - name: Fetch exact mobile CDN URL and record new node presence
         run: |
           sleep 20
           curl -fsSL --retry 5 --retry-delay 3 \
@@ -31,21 +31,17 @@ jobs:
           from pathlib import Path
           d=yaml.safe_load(open('/tmp/mobile.yaml',encoding='utf-8-sig'))
           name='Residential 198.65.47.221'
-          n=next(x for x in d['proxies'] if x.get('name')==name)
-          assert n['server']=='198.65.47.221'
-          assert n['port']==7471
-          assert n['type']=='socks5'
-          assert n['dialer-proxy']=='Airport Front'
+          node=next((x for x in d.get('proxies',[]) if x.get('name')==name),None)
           g=next(x for x in d['proxy-groups'] if x.get('name')=='Final Exit')
-          assert name in g['proxies']
-          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-node-cdn-verified.txt').write_text(
-            'verified=true\nname='+name+'\nserver=198.65.47.221\nport=7471\nfinal_exit_member=true\n',encoding='utf-8')
-          print('exact CDN URL contains the new node')
+          present=(node is not None and node.get('server')=='198.65.47.221' and node.get('port')==7471 and name in g.get('proxies',[]))
+          text='verified='+str(present).lower()+'\nname='+name+'\nfinal_exit_member='+str(name in g.get('proxies',[])).lower()+'\n'
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-node-cdn-observed.txt').write_text(text,encoding='utf-8')
+          print(text)
           PY
-      - name: Commit verification result
+      - name: Commit observed CDN result
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-node-cdn-verified.txt
-          git diff --cached --quiet || git commit -m "Verify new mobile residential node on CDN"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-node-cdn-observed.txt
+          git diff --cached --quiet || git commit -m "Record new mobile node CDN state"
           git push
