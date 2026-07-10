@@ -1,5 +1,6 @@
 name: Check jsDelivr mobile now
 
+# recheck after confirmed purge
 on:
   push:
     paths:
