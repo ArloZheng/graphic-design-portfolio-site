@@ -1,0 +1,37 @@
+name: Verify canonical mobile subscription
+
+on:
+  push:
+    paths:
+      - 'clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+      - 'clash/HApiBDgfuXsS4TD7YnASWlId/unified.yaml'
+  pull_request:
+    paths:
+      - 'clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+      - 'clash/HApiBDgfuXsS4TD7YnASWlId/unified.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate the published mobile profile
+        shell: python
+        run: |
+          from pathlib import Path
+          import yaml
+
+          root = Path('clash/HApiBDgfuXsS4TD7YnASWlId')
+          mobile = yaml.safe_load((root / 'mobile.yaml').read_text(encoding='utf-8-sig'))
+          unified = yaml.safe_load((root / 'unified.yaml').read_text(encoding='utf-8-sig'))
+
+          assert mobile == unified, 'unified.yaml must remain an exact semantic copy of mobile.yaml'
+          assert mobile['mode'] == 'rule'
+          assert mobile['tun']['enable'] is True
+          assert mobile['tun']['strict-route'] is True
+          assert len(mobile['tunnels']) == 3
+          assert mobile['rules'][-1] == 'MATCH,Final Exit'
+          print('Canonical mobile subscription validation passed')
