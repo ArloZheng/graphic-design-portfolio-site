@@ -1,0 +1,81 @@
+name: Restore pre-unified mobile profile
+
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-pre-unified-mobile.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: python -m pip install --quiet pyyaml
+      - name: Restore mobile structure from known-good pre-unified profile
+        shell: bash
+        run: |
+          TARGET='clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          cp "$TARGET" /tmp/current-mobile.yaml
+          git show 40e8480dac5212427c07649e2a1637af4f101da3:"$TARGET" > /tmp/baseline-mobile.yaml
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+
+          current=yaml.safe_load(Path('/tmp/current-mobile.yaml').read_text(encoding='utf-8-sig'))
+          base=yaml.safe_load(Path('/tmp/baseline-mobile.yaml').read_text(encoding='utf-8-sig'))
+
+          current_final=next(g for g in current.get('proxy-groups',[]) if g.get('name')=='Final Exit')
+          residential_names=list(current_final.get('proxies',[]))
+          current_by_name={p.get('name'):p for p in current.get('proxies',[]) if isinstance(p,dict)}
+          residential=[]
+          for name in residential_names:
+              p=dict(current_by_name[name])
+              p['dialer-proxy']='Airport Front'
+              p['ip-version']='ipv4'
+              residential.append(p)
+
+          base['proxies']=residential
+          for g in base.get('proxy-groups',[]):
+              if g.get('name')=='Final Exit':
+                  g['proxies']=residential_names
+                  for k in ('url','interval','timeout','expected-status'):
+                      g.pop(k,None)
+
+          # Keep the current provider URL/path so the old subscription URL stays valid.
+          if current.get('proxy-providers'):
+              base['proxy-providers']=current['proxy-providers']
+
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml').write_text(
+              yaml.safe_dump(base,allow_unicode=True,sort_keys=False,width=100000),encoding='utf-8'
+          )
+          PY
+
+      - name: Validate restored mobile profile
+        run: |
+          python - <<'PY'
+          import yaml
+          p='clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          d=yaml.safe_load(open(p,encoding='utf-8'))
+          assert len(d.get('proxies',[]))==3
+          assert next(g for g in d['proxy-groups'] if g['name']=='Airport Front')['use']==['airport']
+          assert next(g for g in d['proxy-groups'] if g['name']=='US Transit')['use']==['airport']
+          final=next(g for g in d['proxy-groups'] if g['name']=='Final Exit')
+          assert len(final['proxies'])==3
+          for pxy in d['proxies']:
+              assert pxy.get('dialer-proxy')=='Airport Front'
+          assert d['rules'][-1]=='MATCH,Final Exit'
+          print('pre-unified mobile structure restored and validated')
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Restore pre-unified mobile profile structure"
+          git push
