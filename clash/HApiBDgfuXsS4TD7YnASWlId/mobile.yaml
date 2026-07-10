@@ -808,7 +808,12 @@ proxy-groups:
   - US5-HY2
   - US6-HY2
 - name: Final Exit
-  type: select
+  type: fallback
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 8000
+  max-failed-times: 1
+  lazy: false
   proxies:
   - Oregon Residential
 rules:
