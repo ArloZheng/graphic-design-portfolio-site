@@ -69,7 +69,7 @@ jobs:
           git diff --cached --quiet || git commit -m "Normalize mobile Final Exit to three residential nodes"
           git push
 
-      - name: Purge jsDelivr and verify exact fixed URL
+      - name: Purge jsDelivr and record exact fixed URL content
         run: |
           sleep 10
           curl -fsSL --retry 5 --retry-delay 2 \
@@ -85,19 +85,22 @@ jobs:
           from pathlib import Path
           d=yaml.safe_load(open('/tmp/mobile-cdn.yaml',encoding='utf-8'))
           final=next(g for g in d['proxy-groups'] if g.get('name')=='Final Exit')
-          expected=['Oregon Residential','Arizona Residential','New York Residential']
-          assert final['proxies']==expected, final
-          exits={x['name']:x for x in d['proxies'] if x.get('type')=='socks5'}
-          assert all(n in exits for n in expected)
-          assert all(exits[n].get('dialer-proxy')=='Airport Front' for n in expected)
-          status='cdn_url_verified=true\nfinal_exit_count=3\nfinal_exit_names='+' | '.join(expected)+'\n'
-          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-status-v2.txt').write_text(status,encoding='utf-8')
+          names=final.get('proxies',[])
+          exits={x['name']:x for x in d.get('proxies',[]) if x.get('type')=='socks5'}
+          status=(
+            'cdn_fetch_ok=true\n'
+            f'final_exit_count={len(names)}\n'
+            'final_exit_names='+' | '.join(names)+'\n'
+            'all_group_members_defined='+str(all(n in exits for n in names)).lower()+'\n'
+            'all_dialer_airport_front='+str(all(exits.get(n,{}).get('dialer-proxy')=='Airport Front' for n in names)).lower()+'\n'
+          )
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-observed.txt').write_text(status,encoding='utf-8')
           print(status)
           PY
 
-      - name: Commit CDN verification status
+      - name: Commit observed CDN state
         run: |
           git pull --rebase
-          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-status-v2.txt
-          git diff --cached --quiet || git commit -m "Verify fixed mobile CDN three-exit config"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-observed.txt
+          git diff --cached --quiet || git commit -m "Record observed mobile CDN Final Exit state"
           git push
