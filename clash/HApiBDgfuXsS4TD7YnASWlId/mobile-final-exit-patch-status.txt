@@ -1,0 +1,5 @@
+baseline=exact_jsdelivr_mobile_url
+non_final_config_unchanged=true
+final_exit_type=select
+final_exit_count=3
+final_exit_names=Oregon Residential | 亚利桑那州弗拉格斯塔夫 47.215.192.185 | 纽约州纽约市 168.158.76.54

@@ -742,8 +742,7 @@ proxies:
   password: ChzwfDZ4UC
   udp: false
   dialer-proxy: Airport Front
-  ip-version: ipv4
-- name: Arizona Residential
+- name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
   server: gate-sg.ipfoxy.io
   port: 58688
@@ -752,7 +751,7 @@ proxies:
   udp: false
   dialer-proxy: Airport Front
   ip-version: ipv4
-- name: New York Residential
+- name: 纽约州纽约市 168.158.76.54
   type: socks5
   server: 168.158.76.54
   port: 12324
@@ -828,10 +827,15 @@ proxy-groups:
   - US6-HY2
 - name: Final Exit
   type: select
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 8000
+  max-failed-times: 1
+  lazy: false
   proxies:
   - Oregon Residential
-  - Arizona Residential
-  - New York Residential
+  - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  - 纽约州纽约市 168.158.76.54
 rules:
 - AND,((DOMAIN-SUFFIX,chatgpt.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
