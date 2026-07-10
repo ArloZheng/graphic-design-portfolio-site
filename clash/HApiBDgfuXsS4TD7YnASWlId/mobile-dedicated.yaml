@@ -1,0 +1,157 @@
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+ipv6: false
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  default-nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
+  nameserver:
+  - https://dns.alidns.com/dns-query
+  - https://doh.pub/dns-query
+  proxy-server-nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
+proxies:
+- name: US-1TCP
+  type: vless
+  server: us1-r.link-t7.com
+  port: 10238
+  uuid: DBAE2282-3539-4613-9F2F-DC46FE76C7C3
+  udp: true
+  packet-encoding: xudp
+  cipher: auto
+  client-fingerprint: chrome
+  tls: true
+  skip-cert-verify: false
+  servername: s0.awsstatic.com
+  reality-opts:
+    public-key: wOu-BMrXvk9KX23JZrlpUlF4SMjDcejm0vNECdhy5xE
+    short-id: 686c0ef0
+  network: grpc
+  grpc-opts:
+    grpc-service-name: movie
+- name: US-2TCP
+  type: vless
+  server: us2-r.link-t7.com
+  port: 10239
+  uuid: DBAE2282-3539-4613-9F2F-DC46FE76C7C3
+  udp: true
+  packet-encoding: xudp
+  cipher: auto
+  client-fingerprint: chrome
+  tls: true
+  skip-cert-verify: false
+  servername: s0.awsstatic.com
+  reality-opts:
+    public-key: wOu-BMrXvk9KX23JZrlpUlF4SMjDcejm0vNECdhy5xE
+    short-id: 686c0ef0
+  network: grpc
+  grpc-opts:
+    grpc-service-name: movie
+- name: US-3TCP
+  type: vless
+  server: us3-r.link-t7.com
+  port: 10240
+  uuid: DBAE2282-3539-4613-9F2F-DC46FE76C7C3
+  udp: true
+  packet-encoding: xudp
+  cipher: auto
+  client-fingerprint: chrome
+  tls: true
+  skip-cert-verify: false
+  servername: s0.awsstatic.com
+  reality-opts:
+    public-key: wOu-BMrXvk9KX23JZrlpUlF4SMjDcejm0vNECdhy5xE
+    short-id: 686c0ef0
+  network: grpc
+  grpc-opts:
+    grpc-service-name: movie
+- name: US-4TCP
+  type: vless
+  server: us4-r.link-t7.com
+  port: 10241
+  uuid: DBAE2282-3539-4613-9F2F-DC46FE76C7C3
+  udp: true
+  packet-encoding: xudp
+  cipher: auto
+  client-fingerprint: chrome
+  tls: true
+  skip-cert-verify: false
+  servername: s0.awsstatic.com
+  reality-opts:
+    public-key: wOu-BMrXvk9KX23JZrlpUlF4SMjDcejm0vNECdhy5xE
+    short-id: 686c0ef0
+  network: grpc
+  grpc-opts:
+    grpc-service-name: movie
+- name: US-5TCP
+  type: vless
+  server: us5-r.link-t7.com
+  port: 10242
+  uuid: DBAE2282-3539-4613-9F2F-DC46FE76C7C3
+  udp: true
+  packet-encoding: xudp
+  cipher: auto
+  client-fingerprint: chrome
+  tls: true
+  skip-cert-verify: false
+  servername: s0.awsstatic.com
+  reality-opts:
+    public-key: wOu-BMrXvk9KX23JZrlpUlF4SMjDcejm0vNECdhy5xE
+    short-id: 686c0ef0
+  network: grpc
+  grpc-opts:
+    grpc-service-name: movie
+- name: 纽约州纽约市 168.158.76.54
+  type: socks5
+  server: 168.158.76.54
+  port: 12324
+  username: 14a2e3e39efd7
+  password: bcab84b4d5
+  udp: false
+  dialer-proxy: 手机前置
+  ip-version: ipv4
+- name: 俄勒冈州 205.214.55.251
+  type: socks5
+  server: 205.214.55.251
+  port: 443
+  username: mYtvKnngzRKG
+  password: ChzwfDZ4UC
+  udp: false
+  dialer-proxy: 手机前置
+  ip-version: ipv4
+- name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  type: socks5
+  server: gate-sg.ipfoxy.io
+  port: 58688
+  username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
+  password: Vowd7BsAE0M71c6
+  udp: false
+  dialer-proxy: 手机前置
+  ip-version: ipv4
+proxy-groups:
+- name: 手机前置
+  type: select
+  proxies:
+  - US-1TCP
+  - US-2TCP
+  - US-3TCP
+  - US-4TCP
+  - US-5TCP
+- name: 住宅出口
+  type: select
+  proxies:
+  - 纽约州纽约市 168.158.76.54
+  - 俄勒冈州 205.214.55.251
+  - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+rules:
+- GEOSITE,CN,DIRECT
+- GEOIP,CN,DIRECT,no-resolve
+- NETWORK,UDP,手机前置
+- MATCH,住宅出口
