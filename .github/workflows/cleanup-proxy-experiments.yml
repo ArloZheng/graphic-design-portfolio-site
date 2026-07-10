@@ -1,0 +1,119 @@
+name: Cleanup proxy experiment artifacts
+
+on:
+  push:
+    paths:
+      - '.github/workflows/cleanup-proxy-experiments.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remove obsolete proxy experiment workflows and generated test files
+        run: |
+          rm -f \
+            .github/workflows/add-google-auth-routes.yml \
+            .github/workflows/publish-mobile-v2.yml \
+            .github/workflows/repair-mobile-provider-config.yml \
+            .github/workflows/republish-old-mobile-link.yml \
+            .github/workflows/restore-mobile-inline-nodes.yml \
+            .github/workflows/stabilize-mobile-connectivity.yml \
+            .github/workflows/swap-residential-ip.yml \
+            .github/workflows/compact-mobile-provider.yml \
+            .github/workflows/fix-mobile-airport-http-provider.yml \
+            .github/workflows/restore-morning-mobile.yml \
+            .github/workflows/repair-desktop-live-nodes.yml \
+            .github/workflows/fix-mobile-residential-latency.yml \
+            .github/workflows/add-mobile-final-exits.yml \
+            .github/workflows/purge-and-verify-mobile-cdn.yml \
+            .github/workflows/normalize-mobile-final-exit.yml \
+            .github/workflows/test-mobile-cdn-candidates.yml \
+            .github/workflows/publish-desktop-as-mobile.yml \
+            .github/workflows/patch-jsdelivr-mobile-final-exit.yml \
+            .github/workflows/check-jsdelivr-mobile-now.yml \
+            .github/workflows/inspect-jsdelivr-mobile-headers.yml \
+            .github/workflows/inspect-jsdelivr-purge.yml \
+            .github/workflows/compare-jsdelivr-mobile-source.yml \
+            .github/workflows/compare-jsdelivr-mobile-nonfinal.yml \
+            .github/workflows/publish-mobile-from-desktop.yml \
+            .github/workflows/verify-canonical-mobile-subscription.yml
+
+          ROOT='clash/HApiBDgfuXsS4TD7YnASWlId'
+          rm -f \
+            "$ROOT/airport.yaml" \
+            "$ROOT/mobile-desktop.yaml" \
+            "$ROOT/mobile-desktop-cdn-status.txt" \
+            "$ROOT/mobile-stable.yaml" \
+            "$ROOT/mobile-stable-cdn-status.txt" \
+            "$ROOT/mobile-cdn-status.txt" \
+            "$ROOT/mobile-cdn-status-v2.txt" \
+            "$ROOT/mobile-cdn-observed.txt" \
+            "$ROOT/mobile-cdn-candidates.txt" \
+            "$ROOT/mobile-final-exit-patch-status.txt" \
+            "$ROOT/jsdelivr-mobile-final-verification.txt" \
+            "$ROOT/jsdelivr-mobile-now.txt" \
+            "$ROOT/jsdelivr-mobile-headers.txt" \
+            "$ROOT/jsdelivr-purge-response.txt" \
+            "$ROOT/jsdelivr-mobile-source-compare.txt" \
+            "$ROOT/jsdelivr-mobile-nonfinal-compare.txt"
+
+      - name: Write canonical configuration lock record
+        run: |
+          cat > clash/HApiBDgfuXsS4TD7YnASWlId/STABLE-CONFIG-LOCK.md <<'EOF'
+          # Stable proxy configuration lock
+
+          ## Canonical mobile subscription
+
+          URL:
+          https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+
+          Source file:
+          clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+
+          Mobile constraints:
+          - This is the confirmed low-latency mobile baseline.
+          - Do not generate replacement mobile URLs.
+          - Do not replace mobile.yaml with desktop.yaml or provider-split experiments.
+          - Preserve all non-Final-Exit mobile configuration unless explicitly requested.
+          - Final Exit must be type select and expose exactly these three residential exits:
+            1. Oregon / 205.214.55.251
+            2. Arizona Flagstaff / 47.215.192.185
+            3. New York City / 168.158.76.54
+          - Residential exits chain through Airport Front.
+
+          ## Canonical desktop subscription
+
+          Stable pinned URL:
+          https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@0a4607d78f71c346e9e4ea46e20a117926d375ba/clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml
+
+          Source file:
+          clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml
+
+          Desktop constraints:
+          - Desktop configuration is stable and independent from mobile.
+          - Do not modify desktop.yaml when fixing mobile unless explicitly requested.
+          - Do not change the desktop subscription URL during mobile work.
+
+          ## Maintenance rule
+
+          Only mobile.yaml and desktop.yaml are active canonical client profiles for this workflow.
+          Historical provider-split profiles, CDN test profiles, generated status reports, and one-shot repair workflows are obsolete and should not be reused.
+          EOF
+
+      - name: Verify canonical files were not modified by cleanup
+        run: |
+          git diff --exit-code -- clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --exit-code -- clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml
+
+      - name: Commit cleanup and lock record
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Clean proxy experiments and lock stable mobile and desktop configs"
+          git push
