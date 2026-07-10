@@ -734,7 +734,7 @@ proxies:
   sni: us6.dexlos.com
   obfs: salamander
   obfs-password: xK9mN2pLq5vR8wB3
-- name: Oregon Residential
+- name: 俄勒冈州 205.214.55.251
   type: socks5
   server: 205.214.55.251
   port: 443
@@ -742,6 +742,25 @@ proxies:
   password: ChzwfDZ4UC
   udp: false
   dialer-proxy: Airport Front
+  ip-version: ipv4
+- name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  type: socks5
+  server: gate-sg.ipfoxy.io
+  port: 58688
+  username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
+  password: Vowd7BsAE0M71c6
+  udp: false
+  dialer-proxy: Airport Front
+  ip-version: ipv4
+- name: 纽约州纽约市 168.158.76.54
+  type: socks5
+  server: 168.158.76.54
+  port: 12324
+  username: 14a2e3e39efd7
+  password: bcab84b4d5
+  udp: false
+  dialer-proxy: Airport Front
+  ip-version: ipv4
 proxy-groups:
 - name: Airport Front
   type: select
@@ -808,14 +827,11 @@ proxy-groups:
   - US5-HY2
   - US6-HY2
 - name: Final Exit
-  type: fallback
-  url: https://www.gstatic.com/generate_204
-  interval: 300
-  timeout: 8000
-  max-failed-times: 1
-  lazy: false
+  type: select
   proxies:
-  - Oregon Residential
+  - 俄勒冈州 205.214.55.251
+  - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  - 纽约州纽约市 168.158.76.54
 rules:
 - AND,((DOMAIN-SUFFIX,chatgpt.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
 - AND,((DOMAIN-SUFFIX,openai.com),(NETWORK,UDP),(DST-PORT,443)),REJECT
