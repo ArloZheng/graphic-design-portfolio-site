@@ -48,6 +48,15 @@ proxies:
   udp: false
   dialer-proxy: Airport Front
   ip-version: ipv4
+- name: Residential 198.65.47.221
+  type: socks5
+  server: 198.65.47.221
+  port: 7471
+  username: 9x20rcFkf6WE
+  password: ZZxkwowX62ty
+  udp: false
+  dialer-proxy: Airport Front
+  ip-version: ipv4
 proxy-groups:
 - name: Airport Front
   type: select
@@ -66,6 +75,7 @@ proxy-groups:
   - 纽约州纽约市 168.158.76.54
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  - Residential 198.65.47.221
 rules:
 - DOMAIN,raw.githubusercontent.com,DIRECT
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
