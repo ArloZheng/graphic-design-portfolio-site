@@ -834,6 +834,7 @@ proxy-groups:
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
+- DOMAIN,raw.githubusercontent.com,DIRECT
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
 - DOMAIN-SUFFIX,openai.com,Final Exit
 - DOMAIN-SUFFIX,auth.openai.com,Final Exit
