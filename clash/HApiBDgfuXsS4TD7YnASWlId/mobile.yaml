@@ -736,7 +736,7 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: US Transit
+  dialer-proxy: Airport Front
   ip-version: ipv4
 - name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
@@ -745,7 +745,7 @@ proxies:
   username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
   password: Vowd7BsAE0M71c6
   udp: false
-  dialer-proxy: US Transit
+  dialer-proxy: Airport Front
   ip-version: ipv4
 - name: 纽约州纽约市 168.158.76.54
   type: socks5
@@ -754,7 +754,7 @@ proxies:
   username: 14a2e3e39efd7
   password: bcab84b4d5
   udp: false
-  dialer-proxy: US Transit
+  dialer-proxy: Airport Front
   ip-version: ipv4
 proxy-groups:
 - name: Airport Front
@@ -847,21 +847,21 @@ rules:
 - DOMAIN-SUFFIX,intercom.io,Final Exit
 - DOMAIN-SUFFIX,intercomcdn.com,Final Exit
 - DOMAIN-SUFFIX,sentry.io,Final Exit
-- DOMAIN,stun.l.google.com,US Transit
-- DOMAIN,stun1.l.google.com,US Transit
-- DOMAIN,stun2.l.google.com,US Transit
-- DOMAIN,stun3.l.google.com,US Transit
-- DOMAIN,stun4.l.google.com,US Transit
-- DOMAIN,stun.cloudflare.com,US Transit
-- DOMAIN-SUFFIX,stun.twilio.com,US Transit
-- DST-PORT,3478,US Transit
-- DST-PORT,5349,US Transit
-- DST-PORT,19302,US Transit
+- DOMAIN,stun.l.google.com,Airport Front
+- DOMAIN,stun1.l.google.com,Airport Front
+- DOMAIN,stun2.l.google.com,Airport Front
+- DOMAIN,stun3.l.google.com,Airport Front
+- DOMAIN,stun4.l.google.com,Airport Front
+- DOMAIN,stun.cloudflare.com,Airport Front
+- DOMAIN-SUFFIX,stun.twilio.com,Airport Front
+- DST-PORT,3478,Airport Front
+- DST-PORT,5349,Airport Front
+- DST-PORT,19302,Airport Front
 - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
 - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
 - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
 - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
 - GEOIP,CN,DIRECT,no-resolve
-- NETWORK,UDP,US Transit
+- NETWORK,UDP,Airport Front
 - GEOIP,CN,DIRECT
 - MATCH,Final Exit
