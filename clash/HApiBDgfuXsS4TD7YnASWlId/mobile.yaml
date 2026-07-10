@@ -741,7 +741,7 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: US1-HY2
+  dialer-proxy: Airport Front
 proxy-groups:
 - name: Airport Front
   type: select
