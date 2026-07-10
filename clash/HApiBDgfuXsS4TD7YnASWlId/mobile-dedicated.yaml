@@ -115,7 +115,7 @@ proxies:
   username: 14a2e3e39efd7
   password: bcab84b4d5
   udp: false
-  dialer-proxy: 手机前置
+  dialer-proxy: US-1TCP
   ip-version: ipv4
 - name: 俄勒冈州 205.214.55.251
   type: socks5
@@ -124,7 +124,7 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: 手机前置
+  dialer-proxy: US-1TCP
   ip-version: ipv4
 - name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
@@ -133,25 +133,19 @@ proxies:
   username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
   password: Vowd7BsAE0M71c6
   udp: false
-  dialer-proxy: 手机前置
+  dialer-proxy: US-1TCP
   ip-version: ipv4
 proxy-groups:
-- name: 手机前置
-  type: select
-  proxies:
-  - US-1TCP
-  - US-2TCP
-  - US-3TCP
-  - US-4TCP
-  - US-5TCP
 - name: 住宅出口
   type: select
   proxies:
   - 纽约州纽约市 168.158.76.54
   - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
+  url: http://captive.apple.com/hotspot-detect.html
+  interval: 300
 rules:
 - GEOSITE,CN,DIRECT
 - GEOIP,CN,DIRECT,no-resolve
-- NETWORK,UDP,手机前置
+- NETWORK,UDP,US-1TCP
 - MATCH,住宅出口
