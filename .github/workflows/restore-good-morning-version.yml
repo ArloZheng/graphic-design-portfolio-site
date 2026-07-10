@@ -1,0 +1,42 @@
+name: Restore known-good morning version as separate subscription
+
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-good-morning-version.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract known-good pre-IP-change config
+        shell: bash
+        run: |
+          mkdir -p clash/HApiBDgfuXsS4TD7YnASWlId
+          git show 5a0dab6d915ef5fefe07254547504b5d55372751:clash/HApiBDgfuXsS4TD7YnASWlId/unified.yaml > clash/HApiBDgfuXsS4TD7YnASWlId/mobile-morning-good.yaml
+      - name: Validate
+        run: |
+          python - <<'PY'
+          import yaml
+          p='clash/HApiBDgfuXsS4TD7YnASWlId/mobile-morning-good.yaml'
+          d=yaml.safe_load(open(p,encoding='utf-8'))
+          names=[x.get('name') for x in d.get('proxies',[]) if isinstance(x,dict)]
+          assert '密西西比州内特尔顿 45.62.175.121' in names
+          assert '俄勒冈州 205.214.55.251' in names
+          assert '亚利桑那州弗拉格斯塔夫 47.215.192.185' in names
+          assert '弗吉尼亚州利斯堡 199.48.180.238' not in names
+          print('known-good morning version validated')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-morning-good.yaml
+          git diff --cached --quiet || git commit -m "Add known-good morning mobile subscription snapshot"
+          git push
