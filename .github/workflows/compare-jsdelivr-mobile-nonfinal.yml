@@ -1,0 +1,41 @@
+name: Compare jsDelivr mobile non-final config
+
+on:
+  push:
+    paths:
+      - '.github/workflows/compare-jsdelivr-mobile-nonfinal.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - run: |
+          curl -fsSL --retry 5 --retry-delay 3 \
+            'https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
+            -o /tmp/mobile-cdn.yaml
+      - shell: python
+        run: |
+          import copy,yaml
+          from pathlib import Path
+          s=yaml.safe_load(Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml').read_text(encoding='utf-8-sig'))
+          c=yaml.safe_load(Path('/tmp/mobile-cdn.yaml').read_text(encoding='utf-8-sig'))
+          def strip(d):
+            d=copy.deepcopy(d)
+            d['proxies']=[p for p in d.get('proxies',[]) if p.get('type')!='socks5']
+            d['proxy-groups']=[g for g in d.get('proxy-groups',[]) if g.get('name')!='Final Exit']
+            return d
+          same=strip(s)==strip(c)
+          text='non_final_config_identical='+str(same).lower()+'\n'
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/jsdelivr-mobile-nonfinal-compare.txt').write_text(text,encoding='utf-8')
+          print(text)
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/jsdelivr-mobile-nonfinal-compare.txt
+          git diff --cached --quiet || git commit -m "Compare jsDelivr mobile non-final config"
+          git push
