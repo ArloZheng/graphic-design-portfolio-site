@@ -1,0 +1,61 @@
+name: Fix mobile Final Exit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-mobile-final-exit.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Remove Oregon Residential from Final Exit only
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          text = path.read_text(encoding='utf-8')
+          lines = text.splitlines()
+
+          in_final_exit = False
+          removed = False
+          out = []
+
+          for line in lines:
+              if line == '- name: Final Exit':
+                  in_final_exit = True
+                  out.append(line)
+                  continue
+
+              if in_final_exit and line.startswith('- name: ') and line != '- name: Final Exit':
+                  in_final_exit = False
+
+              if in_final_exit and line == '  - Oregon Residential' and not removed:
+                  removed = True
+                  continue
+
+              out.append(line)
+
+          if not removed:
+              raise SystemExit('Target Final Exit entry not found; no changes made.')
+
+          path.write_text('\n'.join(out) + '\n', encoding='utf-8')
+
+      - name: Remove one-shot workflow and commit repair
+        run: |
+          rm .github/workflows/fix-mobile-final-exit.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml .github/workflows/fix-mobile-final-exit.yml
+          git commit -m "Restore mobile Final Exit to three residential IPs"
+          git push origin HEAD:main
