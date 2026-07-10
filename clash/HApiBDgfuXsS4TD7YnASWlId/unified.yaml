@@ -819,12 +819,12 @@ proxy-groups:
   url: http://captive.apple.com/hotspot-detect.html
   interval: 300
   proxies:
-  - US-1TCP
   - US1-HY2
-  - US6-HY2
   - US3-HY2
   - US5-HY2
+  - US6-HY2
   - US2-HY2
+  - US-1TCP
 - name: Final Exit
   type: select
   url: http://captive.apple.com/hotspot-detect.html
