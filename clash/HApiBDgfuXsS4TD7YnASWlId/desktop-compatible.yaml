@@ -831,7 +831,6 @@ proxy-groups:
   interval: 300
   proxies:
   - 俄勒冈州 205.214.55.251
-  - 纽约州纽约市 168.158.76.54
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
 rules:
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
