@@ -734,7 +734,7 @@ proxies:
   sni: us6.dexlos.com
   obfs: salamander
   obfs-password: xK9mN2pLq5vR8wB3
-- name: Oregon Residential
+- name: 俄勒冈州 205.214.55.251
   type: socks5
   server: 205.214.55.251
   port: 443
@@ -842,7 +842,7 @@ proxy-groups:
   max-failed-times: 1
   lazy: false
   proxies:
-  - Oregon Residential
+  - 俄勒冈州 205.214.55.251
   - 亚利桑那州弗拉格斯塔夫 47.215.192.185
   - 纽约州纽约市 168.158.76.54
   - Residential 198.65.47.221
