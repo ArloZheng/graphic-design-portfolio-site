@@ -1,0 +1,63 @@
+ALIAS_ROOT
+{
+  "id": "cqCSkGxQjNOx0SCh",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:59:37.808Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
+
+ALIAS_ROOT_SLASH
+{
+  "id": "rmtRy1pry4jM3Tlq",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:59:38.479Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
+
+CLASH_DIR
+{
+  "id": "g9qgRdcdbAvA4ZLE",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:59:39.153Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
+
+CONFIG_DIR
+{
+  "id": "dUOpuL3mw8TQWs3f",
+  "status": "finished",
+  "timestamp": "2026-07-10T17:59:39.863Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/": {
+      "throttled": true,
+      "throttlingReset": 1736
+    }
+  }
+}
+
+FINAL_EXIT_MEMBERS
+- Oregon Residential
