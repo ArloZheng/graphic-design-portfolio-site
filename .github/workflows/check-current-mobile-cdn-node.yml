@@ -1,0 +1,41 @@
+name: Check current mobile CDN node
+
+on:
+  push:
+    paths:
+      - '.github/workflows/check-current-mobile-cdn-node.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - name: Fetch exact fixed mobile CDN URL
+        run: |
+          curl -fsSL --retry 5 --retry-delay 3 \
+            'https://cdn.jsdelivr.net/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml' \
+            -o /tmp/mobile.yaml
+      - name: Record node visibility
+        shell: python
+        run: |
+          import yaml
+          from pathlib import Path
+          d=yaml.safe_load(Path('/tmp/mobile.yaml').read_text(encoding='utf-8-sig'))
+          name='Residential 198.65.47.221'
+          node=next((x for x in d.get('proxies',[]) if x.get('name')==name),None)
+          final=next(g for g in d['proxy-groups'] if g.get('name')=='Final Exit')
+          ok=(node is not None and node.get('server')=='198.65.47.221' and node.get('port')==7471 and name in final.get('proxies',[]))
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/CURRENT-CDN-NODE-CHECK.txt').write_text(
+            'visible='+str(ok).lower()+'\nfinal_exit_member='+str(name in final.get('proxies',[])).lower()+'\n',encoding='utf-8')
+          print(ok)
+      - name: Commit check result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/CURRENT-CDN-NODE-CHECK.txt
+          git diff --cached --quiet || git commit -m "Record current mobile CDN node visibility"
+          git push
