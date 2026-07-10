@@ -736,7 +736,7 @@ proxies:
   username: mYtvKnngzRKG
   password: ChzwfDZ4UC
   udp: false
-  dialer-proxy: 住宅前置自动选择
+  dialer-proxy: Residential Front
   ip-version: ipv4
 - name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
   type: socks5
@@ -745,7 +745,7 @@ proxies:
   username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
   password: Vowd7BsAE0M71c6
   udp: false
-  dialer-proxy: 住宅前置自动选择
+  dialer-proxy: Residential Front
   ip-version: ipv4
 - name: 纽约州纽约市 168.158.76.54
   type: socks5
@@ -754,7 +754,7 @@ proxies:
   username: 14a2e3e39efd7
   password: bcab84b4d5
   udp: false
-  dialer-proxy: 住宅前置自动选择
+  dialer-proxy: Residential Front
   ip-version: ipv4
 proxy-groups:
 - name: Airport Front
@@ -814,6 +814,17 @@ proxy-groups:
   - US4-HY2
   - US5-HY2
   - US6-HY2
+- name: Residential Front
+  type: fallback
+  url: http://captive.apple.com/hotspot-detect.html
+  interval: 300
+  lazy: true
+  proxies:
+  - US-1TCP
+  - US-2TCP
+  - US-3TCP
+  - US-4TCP
+  - US-5TCP
 - name: US Transit
   type: select
   url: http://captive.apple.com/hotspot-detect.html
@@ -876,3 +887,6 @@ rules:
 - NETWORK,UDP,US Transit
 - GEOIP,CN,DIRECT
 - MATCH,Final Exit
+tcp-concurrent: true
+keep-alive-interval: 15
+unified-delay: true
