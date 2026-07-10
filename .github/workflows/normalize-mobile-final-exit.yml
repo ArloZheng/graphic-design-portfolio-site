@@ -82,6 +82,7 @@ jobs:
             -o /tmp/mobile-cdn.yaml
           python - <<'PY'
           import yaml
+          from pathlib import Path
           d=yaml.safe_load(open('/tmp/mobile-cdn.yaml',encoding='utf-8'))
           final=next(g for g in d['proxy-groups'] if g.get('name')=='Final Exit')
           expected=['Oregon Residential','Arizona Residential','New York Residential']
@@ -89,5 +90,14 @@ jobs:
           exits={x['name']:x for x in d['proxies'] if x.get('type')=='socks5'}
           assert all(n in exits for n in expected)
           assert all(exits[n].get('dialer-proxy')=='Airport Front' for n in expected)
-          print('CDN fixed URL verified:', final['proxies'])
+          status='cdn_url_verified=true\nfinal_exit_count=3\nfinal_exit_names='+' | '.join(expected)+'\n'
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-status-v2.txt').write_text(status,encoding='utf-8')
+          print(status)
           PY
+
+      - name: Commit CDN verification status
+        run: |
+          git pull --rebase
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-cdn-status-v2.txt
+          git diff --cached --quiet || git commit -m "Verify fixed mobile CDN three-exit config"
+          git push
