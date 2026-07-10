@@ -754,7 +754,7 @@ proxies:
   username: 14a2e3e39efd7
   password: bcab84b4d5
   udp: false
-  dialer-proxy: US1-HY2
+  dialer-proxy: US Transit
   ip-version: ipv4
 proxy-groups:
 - name: Airport Front

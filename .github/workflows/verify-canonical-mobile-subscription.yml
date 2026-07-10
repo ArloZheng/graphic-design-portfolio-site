@@ -33,7 +33,9 @@ jobs:
           assert 'tun' not in mobile
           assert 'tunnels' not in mobile
           residential = [proxy for proxy in mobile['proxies'] if proxy.get('type') == 'socks5']
-          assert all(proxy.get('dialer-proxy') == 'US1-HY2' for proxy in residential)
+          for proxy in residential:
+              expected = 'US Transit' if proxy.get('server') == '168.158.76.54' else 'US1-HY2'
+              assert proxy.get('dialer-proxy') == expected
           oregon = next(proxy['name'] for proxy in residential if proxy.get('server') == '205.214.55.251')
           assert mobile['proxy-groups'][-1]['name'] == 'Final Exit'
           assert mobile['proxy-groups'][-1]['proxies'][0] == oregon
