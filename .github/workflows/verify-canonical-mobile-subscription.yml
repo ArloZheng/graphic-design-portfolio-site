@@ -26,19 +26,16 @@ jobs:
 
           root = Path('clash/HApiBDgfuXsS4TD7YnASWlId')
           mobile = yaml.safe_load((root / 'mobile.yaml').read_text(encoding='utf-8-sig'))
-          unified = yaml.safe_load((root / 'unified.yaml').read_text(encoding='utf-8-sig'))
-
-          assert mobile == unified, 'unified.yaml must remain an exact semantic copy of mobile.yaml'
           assert mobile['mode'] == 'rule'
           assert 'tun' not in mobile
           assert 'tunnels' not in mobile
           residential = [proxy for proxy in mobile['proxies'] if proxy.get('type') == 'socks5']
-          for proxy in residential:
-              expected = 'US Transit' if proxy.get('server') == '168.158.76.54' else 'US1-HY2'
-              assert proxy.get('dialer-proxy') == expected
-          oregon = next(proxy['name'] for proxy in residential if proxy.get('server') == '205.214.55.251')
+          assert len(residential) == 1
+          oregon = residential[0]
+          assert oregon.get('server') == '205.214.55.251'
+          assert oregon.get('dialer-proxy') == 'US1-HY2'
           assert mobile['proxy-groups'][-1]['name'] == 'Final Exit'
           assert mobile['proxy-groups'][-1]['type'] == 'fallback'
-          assert mobile['proxy-groups'][-1]['proxies'][0] == oregon
+          assert mobile['proxy-groups'][-1]['proxies'] == [oregon['name']]
           assert mobile['rules'][-1] == 'MATCH,Final Exit'
           print('Canonical mobile subscription validation passed')

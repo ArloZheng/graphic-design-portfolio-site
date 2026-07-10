@@ -799,12 +799,9 @@ proxy-groups:
   - US6-HY2
   - US2-HY2
 - name: Final Exit
-  type: fallback
-  url: https://www.gstatic.com/generate_204
+  type: select
+  url: http://captive.apple.com/hotspot-detect.html
   interval: 300
-  timeout: 8000
-  max-failed-times: 1
-  lazy: false
   proxies:
   - 俄勒冈州 205.214.55.251
   - 纽约州纽约市 168.158.76.54
