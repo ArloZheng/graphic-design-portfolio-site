@@ -1,0 +1,86 @@
+name: Stabilize mobile residential chain
+
+on:
+  push:
+    paths:
+      - '.github/workflows/stabilize-mobile-residential-chain.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - name: Isolate residential TCP chain from mobile UDP transit
+        shell: python
+        run: |
+          from pathlib import Path
+          import yaml
+
+          p=Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          d=yaml.safe_load(p.read_text(encoding='utf-8-sig'))
+
+          d['tcp-concurrent']=True
+          d['keep-alive-interval']=15
+          d['unified-delay']=True
+
+          residential_names={
+            '纽约州纽约市 168.158.76.54',
+            '俄勒冈州 205.214.55.251',
+            '亚利桑那州弗拉格斯塔夫 47.215.192.185'
+          }
+
+          for proxy in d.get('proxies',[]):
+              if isinstance(proxy,dict) and proxy.get('name') in residential_names:
+                  proxy['dialer-proxy']='Residential Front'
+                  proxy['udp']=False
+                  proxy['ip-version']='ipv4'
+
+          groups=d.get('proxy-groups',[])
+          groups=[g for g in groups if g.get('name')!='Residential Front']
+          residential_front={
+            'name':'Residential Front',
+            'type':'fallback',
+            'url':'http://captive.apple.com/hotspot-detect.html',
+            'interval':300,
+            'lazy':True,
+            'proxies':['US-1TCP','US-2TCP','US-3TCP','US-4TCP','US-5TCP']
+          }
+
+          insert_at=next((i for i,g in enumerate(groups) if g.get('name')=='US Transit'),len(groups))
+          groups.insert(insert_at,residential_front)
+          d['proxy-groups']=groups
+
+          p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=100000),encoding='utf-8')
+
+      - name: Validate mobile chain
+        run: |
+          python - <<'PY'
+          import yaml
+          p='clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          d=yaml.safe_load(open(p,encoding='utf-8'))
+          names={'纽约州纽约市 168.158.76.54','俄勒冈州 205.214.55.251','亚利桑那州弗拉格斯塔夫 47.215.192.185'}
+          for x in d['proxies']:
+              if x.get('name') in names:
+                  assert x.get('dialer-proxy')=='Residential Front'
+                  assert x.get('udp') is False
+          rf=next(g for g in d['proxy-groups'] if g['name']=='Residential Front')
+          assert rf['type']=='fallback'
+          assert rf['proxies']==['US-1TCP','US-2TCP','US-3TCP','US-4TCP','US-5TCP']
+          us=next(g for g in d['proxy-groups'] if g['name']=='US Transit')
+          assert us['type']=='select'
+          final=next(g for g in d['proxy-groups'] if g['name']=='Final Exit')
+          assert len(final['proxies'])==3
+          print('mobile residential chain validation passed')
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m "Stabilize mobile residential front chain"
+          git push
