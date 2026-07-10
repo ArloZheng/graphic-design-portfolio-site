@@ -1,0 +1,57 @@
+name: Validate mobile config
+
+on:
+  push:
+    paths:
+      - '.github/workflows/validate-mobile-config.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pyyaml
+      - name: Validate YAML and references
+        shell: python
+        run: |
+          import yaml
+          from pathlib import Path
+
+          p=Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          data=yaml.safe_load(p.read_text(encoding='utf-8-sig'))
+          proxies=data.get('proxies',[])
+          names=[x.get('name') for x in proxies]
+          expected=[
+              'Oregon Residential',
+              '亚利桑那州弗拉格斯塔夫 47.215.192.185',
+              '纽约州纽约市 168.158.76.54',
+              'Residential 198.65.47.221',
+          ]
+          final=next(g for g in data.get('proxy-groups',[]) if g.get('name')=='Final Exit')
+          members=final.get('proxies',[])
+          duplicates=sorted({n for n in names if names.count(n)>1})
+          missing=[n for n in members if n not in names]
+          exact=(members==expected)
+          valid=(data is not None and exact and not duplicates and not missing)
+          report=(
+              f'yaml_parse_ok={data is not None}\n'
+              f'final_exit_exact={exact}\n'
+              f'duplicate_proxy_names={duplicates}\n'
+              f'missing_final_exit_references={missing}\n'
+              f'valid={valid}\n'
+              'final_exit_members:\n'+''.join('- '+x+'\n' for x in members)
+          )
+          Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile-config-validation.txt').write_text(report,encoding='utf-8')
+          print(report)
+          if not valid:
+              raise SystemExit('mobile config validation failed')
+      - name: Commit validation report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile-config-validation.txt
+          git diff --cached --quiet || git commit -m "Record mobile config validation"
+          git push
