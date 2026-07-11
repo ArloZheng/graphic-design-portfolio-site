@@ -21,7 +21,7 @@ dns:
   - 119.29.29.29
   - https://dns.alidns.com/dns-query
 proxies:
-- name: 俄勒冈州 205.214.55.251
+- name: 美国俄勒冈州 205.214.55.251
   type: socks5
   server: 205.214.55.251
   port: 443
@@ -30,16 +30,7 @@ proxies:
   udp: false
   dialer-proxy: Airport Front
   ip-version: ipv4
-- name: 亚利桑那州弗拉格斯塔夫 47.215.192.185
-  type: socks5
-  server: gate-sg.ipfoxy.io
-  port: 58688
-  username: customer-iVTzXV0fHz-cc-US-st-Arizona-city-Flagstaff-sessid-1783524032_10001
-  password: Vowd7BsAE0M71c6
-  udp: false
-  dialer-proxy: Airport Front
-  ip-version: ipv4
-- name: 纽约州纽约市 168.158.76.54
+- name: 美国纽约市 168.158.76.54
   type: socks5
   server: 168.158.76.54
   port: 12324
@@ -48,7 +39,7 @@ proxies:
   udp: false
   dialer-proxy: Airport Front
   ip-version: ipv4
-- name: Residential 198.65.47.221
+- name: 美国 198.65.47.221
   type: socks5
   server: 198.65.47.221
   port: 7471
@@ -72,10 +63,9 @@ proxy-groups:
   url: http://captive.apple.com/hotspot-detect.html
   interval: 300
   proxies:
-  - 纽约州纽约市 168.158.76.54
-  - 俄勒冈州 205.214.55.251
-  - 亚利桑那州弗拉格斯塔夫 47.215.192.185
-  - Residential 198.65.47.221
+  - 美国纽约市 168.158.76.54
+  - 美国俄勒冈州 205.214.55.251
+  - 美国 198.65.47.221
 rules:
 - DOMAIN,raw.githubusercontent.com,DIRECT
 - DOMAIN-SUFFIX,chatgpt.com,Final Exit
