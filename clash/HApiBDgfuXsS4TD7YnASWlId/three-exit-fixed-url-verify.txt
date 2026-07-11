@@ -1,0 +1,31 @@
+MOBILE_PAGES_HTTP=200
+MOBILE_PAGES_VERIFIED=true
+MOBILE_PAGES_ERROR=
+- 美国俄勒冈州 205.214.55.251
+- 美国纽约市 168.158.76.54
+- 美国 198.65.47.221
+
+
+DESKTOP_JSDELIVR_HTTP=200
+DESKTOP_JSDELIVR_VERIFIED=true
+DESKTOP_JSDELIVR_ERROR=
+- 美国纽约市 168.158.76.54
+- 美国俄勒冈州 205.214.55.251
+- 美国 198.65.47.221
+
+
+PURGE_DESKTOP
+{
+  "id": "BK8lCcX77ADrB07Z",
+  "status": "finished",
+  "timestamp": "2026-07-11T09:37:22.747Z",
+  "paths": {
+    "/gh/ArloZheng/graphic-design-portfolio-site@main/clash/HApiBDgfuXsS4TD7YnASWlId/desktop.yaml": {
+      "throttled": false,
+      "providers": {
+        "CF": true,
+        "FY": true
+      }
+    }
+  }
+}
