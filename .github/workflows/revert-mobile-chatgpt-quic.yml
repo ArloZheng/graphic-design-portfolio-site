@@ -26,3 +26,4 @@ jobs:
           git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
           git commit -m 'Revert incompatible mobile ChatGPT process rule'
           git push origin HEAD:main
+# trigger rollback
