@@ -1,0 +1,25 @@
+name: Revert unrelated ChatGPT domain patch
+on:
+  push:
+    branches:
+      - temp-revert-unrelated-domain-fix
+    paths:
+      - .github/workflows/revert-unrelated-chatgpt-domain-fix.yml
+permissions:
+  contents: write
+jobs:
+  revert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Revert only the unrelated domain patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git revert --no-edit 50cf89ac8b55efffddbef1ddf4828b4bfde50111
+          git push origin HEAD:main
