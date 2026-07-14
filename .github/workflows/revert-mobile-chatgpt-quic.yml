@@ -1,0 +1,28 @@
+name: Revert mobile ChatGPT QUIC rule
+on:
+  push:
+    branches:
+      - temp-chatgpt-quic-fix
+    paths:
+      - .github/workflows/revert-mobile-chatgpt-quic.yml
+permissions:
+  contents: write
+jobs:
+  revert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Remove incompatible rule
+        shell: bash
+        run: |
+          python -c "from pathlib import Path; p=Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'); s=p.read_text(encoding='utf-8'); line='- AND,((PROCESS-NAME-REGEX,(?i)(com\\.openai\\.chatgpt|com\\.google\\.android\\.webview|com\\.android\\.webview|com\\.huawei\\.webview)),(NETWORK,UDP),(DST-PORT,443)),REJECT\\n'; assert s.count(line)==1, f'expected one rule, found {s.count(line)}'; p.write_text(s.replace(line,''), encoding='utf-8')"
+      - name: Commit restored mobile config
+        shell: bash
+        run: |
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git commit -m 'Revert incompatible mobile ChatGPT process rule'
+          git push origin HEAD:main
