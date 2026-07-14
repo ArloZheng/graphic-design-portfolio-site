@@ -1,0 +1,57 @@
+name: Verify mobile Pages config
+on:
+  push:
+    branches:
+      - temp-chatgpt-quic-fix
+    paths:
+      - .github/workflows/verify-mobile-pages.yml
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: temp-chatgpt-quic-fix
+      - name: Check public endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p verification
+          PAGES='https://arlozheng.github.io/graphic-design-portfolio-site/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          RAW='https://raw.githubusercontent.com/ArloZheng/graphic-design-portfolio-site/main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml'
+          pages_code=$(curl -L -sS -o /tmp/pages.yaml -w '%{http_code}' "$PAGES" || true)
+          raw_code=$(curl -L -sS -o /tmp/raw.yaml -w '%{http_code}' "$RAW" || true)
+          python -m pip install --quiet pyyaml
+          {
+            echo "PAGES_HTTP=$pages_code"
+            echo "RAW_HTTP=$raw_code"
+            python - <<'PY'
+import yaml
+from pathlib import Path
+needle = r'com\.openai\.chatgpt|com\.google\.android\.webview'
+for label, path in [('PAGES','/tmp/pages.yaml'),('RAW','/tmp/raw.yaml')]:
+    p=Path(path)
+    text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''
+    print(f'{label}_LENGTH={len(text)}')
+    print(f'{label}_HAS_NEW_RULE={str(needle in text).lower()}')
+    try:
+        data=yaml.safe_load(text)
+        ok=isinstance(data, dict) and isinstance(data.get('rules'), list)
+        print(f'{label}_YAML_OK={str(ok).lower()}')
+        if ok:
+            print(f'{label}_RULE_COUNT={len(data["rules"])}')
+    except Exception as e:
+        print(f'{label}_YAML_OK=false')
+        print(f'{label}_YAML_ERROR={type(e).__name__}:{e}')
+PY
+          } > verification/mobile-pages-check.txt
+      - name: Commit report
+        shell: bash
+        run: |
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add verification/mobile-pages-check.txt
+          git commit -m 'Record mobile Pages verification' || exit 0
+          git push origin HEAD:temp-chatgpt-quic-fix
