@@ -55,3 +55,4 @@ PY
           git add verification/mobile-pages-check.txt
           git commit -m 'Record mobile Pages verification' || exit 0
           git push origin HEAD:temp-chatgpt-quic-fix
+# trigger verification
