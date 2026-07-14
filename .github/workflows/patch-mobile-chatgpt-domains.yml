@@ -1,0 +1,76 @@
+name: Patch mobile ChatGPT auxiliary domains
+on:
+  push:
+    branches:
+      - temp-chatgpt-domain-fix
+    paths:
+      - .github/workflows/patch-mobile-chatgpt-domains.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Add compatible domain rules and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import copy
+          import yaml
+
+          path = Path('clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml')
+          text = path.read_text(encoding='utf-8')
+          before = yaml.safe_load(text)
+
+          anchor = '- AND,((DOMAIN-SUFFIX,oaiusercontent.com),(NETWORK,UDP),(DST-PORT,443)),REJECT\n'
+          rules = [
+              '- AND,((DOMAIN-SUFFIX,oaistatsig.com),(NETWORK,UDP),(DST-PORT,443)),REJECT',
+              '- AND,((DOMAIN-SUFFIX,openaimerge.com),(NETWORK,UDP),(DST-PORT,443)),REJECT',
+              '- AND,((DOMAIN-SUFFIX,workos.com),(NETWORK,UDP),(DST-PORT,443)),REJECT',
+              '- AND,((DOMAIN-SUFFIX,workoscdn.com),(NETWORK,UDP),(DST-PORT,443)),REJECT',
+              '- AND,((DOMAIN,challenges.cloudflare.com),(NETWORK,UDP),(DST-PORT,443)),REJECT',
+              '- AND,((DOMAIN,workos.imgix.net),(NETWORK,UDP),(DST-PORT,443)),REJECT',
+              '- AND,((DOMAIN-SUFFIX,intercom.io),(NETWORK,UDP),(DST-PORT,443)),REJECT',
+              '- AND,((DOMAIN-SUFFIX,intercomcdn.com),(NETWORK,UDP),(DST-PORT,443)),REJECT',
+          ]
+
+          if any(rule in text for rule in rules):
+              raise SystemExit('One or more target rules already exist; refusing duplicate patch')
+          if text.count(anchor) != 1:
+              raise SystemExit(f'Expected one anchor, found {text.count(anchor)}')
+
+          block = ''.join(rule + '\n' for rule in rules)
+          updated = text.replace(anchor, anchor + block, 1)
+          after = yaml.safe_load(updated)
+
+          if not isinstance(before, dict) or not isinstance(after, dict):
+              raise SystemExit('YAML root must be a mapping')
+          for key in ('dns', 'proxies', 'proxy-groups'):
+              if before.get(key) != after.get(key):
+                  raise SystemExit(f'Unexpected change to {key}')
+          if len(after.get('rules', [])) != len(before.get('rules', [])) + len(rules):
+              raise SystemExit('Unexpected rules count change')
+          for rule in rules:
+              if updated.count(rule) != 1:
+                  raise SystemExit(f'Rule count mismatch: {rule}')
+          process_marker = '- AND,((PROCESS-NAME-REGEX,'
+          if updated.index(rules[-1]) > updated.index(process_marker):
+              raise SystemExit('New domain rules must precede process UDP rule')
+
+          path.write_text(updated, encoding='utf-8')
+          print('Validation passed; added only compatible ChatGPT auxiliary-domain UDP/443 reject rules')
+          PY
+      - name: Commit mobile fix
+        shell: bash
+        run: |
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+          git diff --cached --quiet || git commit -m 'Route ChatGPT auxiliary domains over TCP on mobile'
+          git push origin HEAD:main
