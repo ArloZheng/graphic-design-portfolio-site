@@ -5,7 +5,7 @@
 手机端远程配置 URL：
 
 ```text
-https://raw.githubusercontent.com/ArloZheng/graphic-design-portfolio-site/main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+https://arlozheng.github.io/graphic-design-portfolio-site/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
 ```
 
 手机 Clash/Mihomo 客户端通过 URL 导入此地址。以后配置更新后，手机端只需要刷新/更新远程配置，不需要重新导入文件。
@@ -209,7 +209,7 @@ Codex 或其他自动化工具维护此配置时，必须遵循：
 仓库：ArloZheng/graphic-design-portfolio-site
 主配置路径：clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
 维护说明：docs/clash-mobile-maintenance.md
-固定订阅 URL：https://raw.githubusercontent.com/ArloZheng/graphic-design-portfolio-site/main/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
+固定订阅 URL：https://arlozheng.github.io/graphic-design-portfolio-site/clash/HApiBDgfuXsS4TD7YnASWlId/mobile.yaml
 
 维护原则：
 1. 先读取 docs/clash-mobile-maintenance.md 和现有 mobile.yaml。
